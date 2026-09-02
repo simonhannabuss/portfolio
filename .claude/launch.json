@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "portfolio",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [".claude/dev-server.py", "8662"],
+      "port": 8662
+    }
+  ]
+}
