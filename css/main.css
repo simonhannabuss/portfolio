@@ -1053,10 +1053,12 @@ svg.defs-only {
       background-size: 5px 14.28571428571429%;
       height: 27.4vw; } }
 
-.chart--circles {
+.chart--circles,
+.chart--rhombuses {
   padding: 0 0 50px; }
   @media screen and (min-width: 51.25em) {
-    .chart--circles {
+    .chart--circles,
+    .chart--rhombuses {
       height: auto; } }
 
 .chart__list {
@@ -1084,7 +1086,8 @@ svg.defs-only {
       height: 25vw;
       padding: 0 60px; } }
   @media screen and (min-width: 51.25em) {
-    .chart--circles .chart__list {
+    .chart--circles .chart__list,
+    .chart--rhombuses .chart__list {
       height: 33vw;
       max-height: 450px; } }
 
@@ -1116,12 +1119,14 @@ svg.defs-only {
     @media screen and (min-width: 51.25em) {
       .chart__item svg {
         position: static; }
-        .chart--circles .chart__item svg {
+        .chart--circles .chart__item svg,
+        .chart--rhombuses .chart__item svg {
           margin: auto; } }
   @media screen and (min-width: 51.25em) {
     .chart__item {
       margin: auto -12px 45px; }
-      .chart--circles .chart__item {
+      .chart--circles .chart__item,
+      .chart--rhombuses .chart__item {
         margin-bottom: 0;
         margin-top: 0; } }
 
