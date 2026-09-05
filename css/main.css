@@ -1125,8 +1125,12 @@ svg.defs-only {
   @media screen and (min-width: 51.25em) {
     .chart__item {
       margin: auto -12px 45px; }
-      .chart--circles .chart__item,
+      .chart--circles .chart__item {
+        margin-bottom: 0;
+        margin-top: 0; }
       .chart--rhombuses .chart__item {
+        margin-left: -32px;
+        margin-right: -32px;
         margin-bottom: 0;
         margin-top: 0; } }
 
