@@ -7331,22 +7331,18 @@
                 }
             }
             if (!s.params.freeMode) {
-                // A single physical trackpad swipe fires a dense burst of
-                // wheel events (the swipe itself plus its momentum/inertia
-                // tail), unlike a notched mouse wheel's few discrete steps.
-                // Treat the whole burst as one gesture: trigger on the
-                // leading event, then ignore further events until there has
-                // been a genuine pause (no events at all) - not just until
-                // the CSS transition finishes, which the burst can easily
-                // still be running through.
-                if (!s._wheelGestureLocked) {
+                // Gate purely on the slide transition actually running.
+                // Anything based on event timing/silence or delta magnitude
+                // can't reliably tell a dying momentum tick apart from a
+                // fresh swipe (trackpad momentum can easily keep sending
+                // meaningful deltas well past the transition's own
+                // duration), and ends up swallowing legitimate follow-up
+                // swipes or reversals - i.e. getting stuck. This can't get
+                // stuck: every event is free to trigger a change the
+                // instant no transition is in flight, deterministically.
+                if (!s.animating) {
                     if (delta < 0) s.slideNext(); else s.slidePrev();
-                    s._wheelGestureLocked = true;
                 }
-                clearTimeout(s._wheelGestureTimeout);
-                s._wheelGestureTimeout = setTimeout(function() {
-                    s._wheelGestureLocked = false;
-                }, 180);
             } else {
                 var position = s.getWrapperTranslate() + delta;
                 if (position > 0) position = 0;
