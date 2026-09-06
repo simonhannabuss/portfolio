@@ -7335,24 +7335,39 @@
                 // events - an active phase while the finger moves, then a
                 // momentum/inertia tail that keeps sending events, on macOS
                 // often for several hundred ms after the finger lifts.
-                // Treating every event as its own input either lets one
-                // swipe's tail trigger several slide changes (overshoot),
-                // or - if suppressed too bluntly - swallows the next
-                // legitimate swipe or a reversal (stuck). Two things are
-                // used together to get "one swipe = one slide" without
-                // either failure mode:
                 //
-                //  - a lock that only releases after wheel events actually
-                //    go quiet for a bit, so a single swipe's whole tail is
-                //    treated as the one gesture that already fired; and
-                //  - an unconditional bypass on direction change, since
-                //    trackpad momentum can never reverse direction on its
-                //    own - a flip is always a fresh, deliberate gesture and
-                //    must never be swallowed, however soon it follows.
+                // A silence-based lock (wait for events to stop before
+                // allowing another trigger) can collapse one swipe's tail
+                // into a single slide change, but it cannot tell "still the
+                // same swipe's tail" apart from "the user swiped again,
+                // fast" - both look identical, a steady stream of events
+                // with short gaps. Any fixed wait long enough to swallow a
+                // slow-decaying tail is also long enough to swallow a
+                // genuine quick second swipe, which is exactly the "gets
+                // stuck if I go quickly" complaint.
+                //
+                // Timing can't disambiguate these, but physics can: once a
+                // swipe's momentum starts decaying it can only ever get
+                // weaker, never stronger, on its own. So an event whose
+                // magnitude jumps well above the previous one is never a
+                // continuation of a dying tail - it can only be a fresh,
+                // deliberate swipe, however soon it follows, even one just
+                // as hard as the last (a same-strength repeat swipe still
+                // jumps up from that tail's near-zero final samples). A
+                // generous margin (not just "any increase") keeps ordinary
+                // hardware jitter within one real swipe's decay from being
+                // misread as a new gesture. That, plus an unconditional
+                // bypass on direction change (momentum can never reverse
+                // direction either), is what actually tells gestures apart.
+                // A short silence timeout remains only as a backstop for a
+                // soft follow-up swipe that never spikes back up at all.
                 var wheelDirection = delta < 0 ? 1 : -1;
+                var wheelMagnitude = Math.abs(delta);
                 var wheelDirectionChanged = s._wheelLastDirection !== undefined && s._wheelLastDirection !== wheelDirection;
+                var wheelReaccelerated = s._wheelLastMagnitude === undefined || wheelMagnitude > s._wheelLastMagnitude * 1.4;
                 s._wheelLastDirection = wheelDirection;
-                if (wheelDirectionChanged) {
+                s._wheelLastMagnitude = wheelMagnitude;
+                if (wheelDirectionChanged || wheelReaccelerated) {
                     s._wheelGestureLocked = false;
                 }
                 if (!s._wheelGestureLocked) {
@@ -7362,6 +7377,7 @@
                 clearTimeout(s._wheelGestureTimeout);
                 s._wheelGestureTimeout = setTimeout(function() {
                     s._wheelGestureLocked = false;
+                    s._wheelLastMagnitude = undefined;
                 }, 450);
             } else {
                 var position = s.getWrapperTranslate() + delta;
