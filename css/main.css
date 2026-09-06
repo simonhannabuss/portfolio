@@ -860,7 +860,7 @@ svg.defs-only {
     transition: all 0.45s cubic-bezier(0.32, 0, 0.3, 1); }
     @media screen and (min-width: 38.75em) {
       .is-active .details__overlay {
-        opacity: 0.3; } }
+        opacity: 0.45; } }
   .no-pointerevents .is-active .details__overlay {
     display: block; }
 
