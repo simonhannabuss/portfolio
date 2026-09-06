@@ -829,7 +829,7 @@ svg.defs-only {
       line-height: 1.66; } }
   @media screen and (min-width: 90em) {
     .details__description {
-      max-width: 70%;
+      max-width: 760px;
       margin-left: auto;
       margin-right: auto; } }
 
