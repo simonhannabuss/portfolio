@@ -7349,36 +7349,44 @@
                 // Timing can't disambiguate these, but physics can: once a
                 // swipe's momentum starts decaying it can only ever get
                 // weaker, never stronger, on its own. So an event whose
-                // magnitude jumps well above the previous one is never a
-                // continuation of a dying tail - it can only be a fresh,
-                // deliberate swipe, however soon it follows, even one just
-                // as hard as the last (a same-strength repeat swipe still
-                // jumps up from that tail's near-zero final samples). A
-                // generous margin (not just "any increase") keeps ordinary
-                // hardware jitter within one real swipe's decay from being
-                // misread as a new gesture. That, plus an unconditional
-                // bypass on direction change (momentum can never reverse
-                // direction either), is what actually tells gestures apart.
-                // A short silence timeout remains only as a backstop for a
-                // soft follow-up swipe that never spikes back up at all.
+                // magnitude jumps back up is never a continuation of a
+                // dying tail - it can only be a fresh, deliberate swipe,
+                // however soon it follows, even one just as hard as the
+                // last (a same-strength repeat swipe still jumps up from
+                // wherever the tail had decayed to). Compared against the
+                // *lowest* magnitude seen since the lock engaged - not just
+                // the immediately preceding sample, which real hardware
+                // jitter can bounce up and down from one event to the next
+                // even while genuinely decaying overall - so a small bounce
+                // within one real tail isn't misread as a new gesture, but
+                // the bar a fresh swipe needs to clear only gets lower as
+                // that tail keeps fading, matching how unambiguous a real
+                // new swipe becomes the longer the old one has been dying.
+                // That, plus an unconditional bypass on direction change
+                // (momentum can never reverse direction either), is what
+                // actually tells gestures apart. A short silence timeout
+                // remains only as a backstop for a soft follow-up swipe
+                // that never spikes back up at all.
                 var wheelDirection = delta < 0 ? 1 : -1;
                 var wheelMagnitude = Math.abs(delta);
                 var wheelDirectionChanged = s._wheelLastDirection !== undefined && s._wheelLastDirection !== wheelDirection;
-                var wheelReaccelerated = s._wheelLastMagnitude === undefined || wheelMagnitude > s._wheelLastMagnitude * 1.4;
+                var wheelReaccelerated = s._wheelGestureFloor === undefined || wheelMagnitude > s._wheelGestureFloor * 1.15 + 2;
                 s._wheelLastDirection = wheelDirection;
-                s._wheelLastMagnitude = wheelMagnitude;
                 if (wheelDirectionChanged || wheelReaccelerated) {
                     s._wheelGestureLocked = false;
                 }
                 if (!s._wheelGestureLocked) {
                     if (delta < 0) s.slideNext(); else s.slidePrev();
                     s._wheelGestureLocked = true;
+                    s._wheelGestureFloor = wheelMagnitude;
+                } else if (wheelMagnitude < s._wheelGestureFloor) {
+                    s._wheelGestureFloor = wheelMagnitude;
                 }
                 clearTimeout(s._wheelGestureTimeout);
                 s._wheelGestureTimeout = setTimeout(function() {
                     s._wheelGestureLocked = false;
-                    s._wheelLastMagnitude = undefined;
-                }, 450);
+                    s._wheelGestureFloor = undefined;
+                }, 400);
             } else {
                 var position = s.getWrapperTranslate() + delta;
                 if (position > 0) position = 0;
