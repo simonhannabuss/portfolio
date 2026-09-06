@@ -7331,10 +7331,12 @@
                 }
             }
             if (!s.params.freeMode) {
-                if (!s.animating && new Date().getTime() - s._lastWheelScrollTime > 120) {
-                    if (delta < 0) s.slideNext(); else s.slidePrev();
+                if (!s.animating) {
+                    if (new Date().getTime() - s._lastWheelScrollTime > 120) {
+                        if (delta < 0) s.slideNext(); else s.slidePrev();
+                    }
+                    s._lastWheelScrollTime = new Date().getTime();
                 }
-                s._lastWheelScrollTime = new Date().getTime();
             } else {
                 var position = s.getWrapperTranslate() + delta;
                 if (position > 0) position = 0;
