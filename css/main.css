@@ -827,6 +827,11 @@ svg.defs-only {
     .details__description {
       font-size: 15px;
       line-height: 1.66; } }
+  @media screen and (min-width: 90em) {
+    .details__description {
+      max-width: 70%;
+      margin-left: auto;
+      margin-right: auto; } }
 
 .details__overlay {
   background: #000;
