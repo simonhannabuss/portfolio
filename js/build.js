@@ -7353,39 +7353,71 @@
                 // dying tail - it can only be a fresh, deliberate swipe,
                 // however soon it follows, even one just as hard as the
                 // last (a same-strength repeat swipe still jumps up from
-                // wherever the tail had decayed to). Compared against the
-                // *lowest* magnitude seen since the lock engaged - not just
-                // the immediately preceding sample, which real hardware
-                // jitter can bounce up and down from one event to the next
-                // even while genuinely decaying overall - so a small bounce
-                // within one real tail isn't misread as a new gesture, but
-                // the bar a fresh swipe needs to clear only gets lower as
-                // that tail keeps fading, matching how unambiguous a real
-                // new swipe becomes the longer the old one has been dying.
-                // That, plus an unconditional bypass on direction change
-                // (momentum can never reverse direction either), is what
-                // actually tells gestures apart. A short silence timeout
-                // remains only as a backstop for a soft follow-up swipe
-                // that never spikes back up at all.
+                // wherever the tail had decayed to).
+                //
+                // The reacceleration bar is set relative to a floor - an
+                // estimate of how weak this gesture's tail has decayed to -
+                // scaled to a fraction of this gesture's own peak strength
+                // so it can never collapse toward zero and can never be
+                // fooled by whatever absolute units the browser happens to
+                // report wheel deltas in.
+                //
+                // Two things make a single raw sample an unreliable signal
+                // on real hardware, in both directions. On the low side: a
+                // raw running MINIMUM can land on a single unlucky
+                // below-trend outlier, after which an ordinary next sample
+                // - not a new gesture at all - looks like a big jump
+                // relative to that outlier. Fixed by smoothing the floor
+                // (only easing it down a fraction of the way to a new low
+                // each time) so one noisy low sample can't drag it down
+                // instantly. On the high side: a single above-trend outlier
+                // can by chance clear the bar on its own even with a
+                // reasonable margin. Fixed by requiring two qualifying
+                // samples in a row before believing it - two independent
+                // noise spikes back to back is far less likely than one,
+                // while a genuine new swipe supplies several strong samples
+                // in a row and so still confirms within a sample or two
+                // (a few ms, imperceptible).
+                //
+                // Direction change is exempt from all of this and stays an
+                // unconditional, single-sample, instant bypass: unlike
+                // magnitude, a reversed sign can never be produced by
+                // jitter on a continuing gesture, so it needs no
+                // confirmation. A short silence timeout remains only as a
+                // backstop for a soft follow-up swipe that never spikes
+                // back up at all.
                 var wheelDirection = delta < 0 ? 1 : -1;
                 var wheelMagnitude = Math.abs(delta);
                 var wheelDirectionChanged = s._wheelLastDirection !== undefined && s._wheelLastDirection !== wheelDirection;
-                var wheelReaccelerated = s._wheelGestureFloor === undefined || wheelMagnitude > s._wheelGestureFloor * 1.15 + 2;
+                var wheelReaccelQualifies = false;
+                if (s._wheelGestureFloor !== undefined) {
+                    var wheelEffectiveFloor = Math.max(s._wheelGestureFloor, s._wheelGesturePeak * 0.12);
+                    wheelReaccelQualifies = wheelMagnitude > wheelEffectiveFloor * 1.2 + s._wheelGesturePeak * 0.05;
+                }
+                s._wheelReaccelStreak = wheelReaccelQualifies ? (s._wheelReaccelStreak || 0) + 1 : 0;
+                var wheelReaccelerated = s._wheelGestureFloor === undefined || wheelDirectionChanged || s._wheelReaccelStreak >= 2;
                 s._wheelLastDirection = wheelDirection;
-                if (wheelDirectionChanged || wheelReaccelerated) {
+                if (wheelReaccelerated) {
                     s._wheelGestureLocked = false;
                 }
                 if (!s._wheelGestureLocked) {
                     if (delta < 0) s.slideNext(); else s.slidePrev();
                     s._wheelGestureLocked = true;
                     s._wheelGestureFloor = wheelMagnitude;
-                } else if (wheelMagnitude < s._wheelGestureFloor) {
-                    s._wheelGestureFloor = wheelMagnitude;
+                    s._wheelGesturePeak = wheelMagnitude;
+                    s._wheelReaccelStreak = 0;
+                } else {
+                    if (wheelMagnitude <= s._wheelGestureFloor) {
+                        s._wheelGestureFloor = s._wheelGestureFloor * 0.7 + wheelMagnitude * 0.3;
+                    }
+                    if (wheelMagnitude > s._wheelGesturePeak) s._wheelGesturePeak = wheelMagnitude;
                 }
                 clearTimeout(s._wheelGestureTimeout);
                 s._wheelGestureTimeout = setTimeout(function() {
                     s._wheelGestureLocked = false;
                     s._wheelGestureFloor = undefined;
+                    s._wheelGesturePeak = undefined;
+                    s._wheelReaccelStreak = 0;
                 }, 400);
             } else {
                 var position = s.getWrapperTranslate() + delta;
