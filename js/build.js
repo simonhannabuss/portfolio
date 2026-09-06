@@ -7331,18 +7331,38 @@
                 }
             }
             if (!s.params.freeMode) {
-                // Gate purely on the slide transition actually running.
-                // Anything based on event timing/silence or delta magnitude
-                // can't reliably tell a dying momentum tick apart from a
-                // fresh swipe (trackpad momentum can easily keep sending
-                // meaningful deltas well past the transition's own
-                // duration), and ends up swallowing legitimate follow-up
-                // swipes or reversals - i.e. getting stuck. This can't get
-                // stuck: every event is free to trigger a change the
-                // instant no transition is in flight, deterministically.
-                if (!s.animating) {
-                    if (delta < 0) s.slideNext(); else s.slidePrev();
+                // One physical trackpad swipe fires a whole burst of wheel
+                // events - an active phase while the finger moves, then a
+                // momentum/inertia tail that keeps sending events, on macOS
+                // often for several hundred ms after the finger lifts.
+                // Treating every event as its own input either lets one
+                // swipe's tail trigger several slide changes (overshoot),
+                // or - if suppressed too bluntly - swallows the next
+                // legitimate swipe or a reversal (stuck). Two things are
+                // used together to get "one swipe = one slide" without
+                // either failure mode:
+                //
+                //  - a lock that only releases after wheel events actually
+                //    go quiet for a bit, so a single swipe's whole tail is
+                //    treated as the one gesture that already fired; and
+                //  - an unconditional bypass on direction change, since
+                //    trackpad momentum can never reverse direction on its
+                //    own - a flip is always a fresh, deliberate gesture and
+                //    must never be swallowed, however soon it follows.
+                var wheelDirection = delta < 0 ? 1 : -1;
+                var wheelDirectionChanged = s._wheelLastDirection !== undefined && s._wheelLastDirection !== wheelDirection;
+                s._wheelLastDirection = wheelDirection;
+                if (wheelDirectionChanged) {
+                    s._wheelGestureLocked = false;
                 }
+                if (!s._wheelGestureLocked) {
+                    if (delta < 0) s.slideNext(); else s.slidePrev();
+                    s._wheelGestureLocked = true;
+                }
+                clearTimeout(s._wheelGestureTimeout);
+                s._wheelGestureTimeout = setTimeout(function() {
+                    s._wheelGestureLocked = false;
+                }, 450);
             } else {
                 var position = s.getWrapperTranslate() + delta;
                 if (position > 0) position = 0;
