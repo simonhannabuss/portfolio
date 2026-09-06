@@ -7331,12 +7331,22 @@
                 }
             }
             if (!s.params.freeMode) {
-                if (!s.animating) {
-                    if (new Date().getTime() - s._lastWheelScrollTime > 120) {
-                        if (delta < 0) s.slideNext(); else s.slidePrev();
-                    }
-                    s._lastWheelScrollTime = new Date().getTime();
+                // A single physical trackpad swipe fires a dense burst of
+                // wheel events (the swipe itself plus its momentum/inertia
+                // tail), unlike a notched mouse wheel's few discrete steps.
+                // Treat the whole burst as one gesture: trigger on the
+                // leading event, then ignore further events until there has
+                // been a genuine pause (no events at all) - not just until
+                // the CSS transition finishes, which the burst can easily
+                // still be running through.
+                if (!s._wheelGestureLocked) {
+                    if (delta < 0) s.slideNext(); else s.slidePrev();
+                    s._wheelGestureLocked = true;
                 }
+                clearTimeout(s._wheelGestureTimeout);
+                s._wheelGestureTimeout = setTimeout(function() {
+                    s._wheelGestureLocked = false;
+                }, 180);
             } else {
                 var position = s.getWrapperTranslate() + delta;
                 if (position > 0) position = 0;
