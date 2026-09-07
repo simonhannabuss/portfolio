@@ -7321,10 +7321,21 @@
                 }
             } else if (we === "DOMMouseScroll") delta = -e.detail; else if (we === "wheel") {
                 if (s.params.mousewheelForceToAxis) {
+                    // A real two-finger trackpad swipe always carries some
+                    // drift on the *other* axis too, especially late in a
+                    // swipe's decay where the intended axis's delta is
+                    // already small - a strict "our axis must be the
+                    // bigger one" test throws that sample away entirely
+                    // (no preventDefault, no gesture-lock bookkeeping),
+                    // leaving a gap that can starve the silence timeout and
+                    // make the lock release mid-swipe. Only bail out when
+                    // the other axis is clearly, substantially dominant -
+                    // a genuinely orthogonal gesture, not just noise on top
+                    // of this swiper's own axis.
                     if (isH()) {
-                        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) delta = -e.deltaX; else return;
+                        if (Math.abs(e.deltaY) > Math.abs(e.deltaX) * 2) return; else delta = -e.deltaX;
                     } else {
-                        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) delta = -e.deltaY; else return;
+                        if (Math.abs(e.deltaX) > Math.abs(e.deltaY) * 2) return; else delta = -e.deltaY;
                     }
                 } else {
                     delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? -e.deltaX : -e.deltaY;
@@ -7392,7 +7403,7 @@
                 var wheelReaccelQualifies = false;
                 if (s._wheelGestureFloor !== undefined) {
                     var wheelEffectiveFloor = Math.max(s._wheelGestureFloor, s._wheelGesturePeak * 0.12);
-                    wheelReaccelQualifies = wheelMagnitude > wheelEffectiveFloor * 1.2 + s._wheelGesturePeak * 0.05;
+                    wheelReaccelQualifies = wheelMagnitude > wheelEffectiveFloor * 1.35 + s._wheelGesturePeak * 0.08;
                 }
                 s._wheelReaccelStreak = wheelReaccelQualifies ? (s._wheelReaccelStreak || 0) + 1 : 0;
                 var wheelReaccelerated = s._wheelGestureFloor === undefined || wheelDirectionChanged || s._wheelReaccelStreak >= 2;
