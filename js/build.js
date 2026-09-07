@@ -7397,11 +7397,22 @@
                 // confirmation. A short silence timeout remains only as a
                 // backstop for a soft follow-up swipe that never spikes
                 // back up at all.
+                //
+                // A real swipe isn't just a decaying tail - the finger
+                // itself accelerates for the first several events before
+                // momentum takes over, so magnitude naturally RISES for a
+                // while right after the trigger, same as it does at the
+                // start of a genuinely new gesture. Reacceleration
+                // detection can't tell those apart by magnitude alone, so
+                // it stays off entirely until this gesture has actually
+                // turned over - shown a real dip below its own peak - and
+                // only watches for a rise back up after that point. Until
+                // then, only a direction change can end the lock early.
                 var wheelDirection = delta < 0 ? 1 : -1;
                 var wheelMagnitude = Math.abs(delta);
                 var wheelDirectionChanged = s._wheelLastDirection !== undefined && s._wheelLastDirection !== wheelDirection;
                 var wheelReaccelQualifies = false;
-                if (s._wheelGestureFloor !== undefined) {
+                if (s._wheelGestureFloor !== undefined && s._wheelGestureHasDecayed) {
                     var wheelEffectiveFloor = Math.max(s._wheelGestureFloor, s._wheelGesturePeak * 0.12);
                     wheelReaccelQualifies = wheelMagnitude > wheelEffectiveFloor * 1.35 + s._wheelGesturePeak * 0.08;
                 }
@@ -7416,9 +7427,24 @@
                     s._wheelGestureLocked = true;
                     s._wheelGestureFloor = wheelMagnitude;
                     s._wheelGesturePeak = wheelMagnitude;
+                    s._wheelGestureHasDecayed = false;
                     s._wheelReaccelStreak = 0;
                 } else {
-                    if (wheelMagnitude <= s._wheelGestureFloor) {
+                    // The floor must only ever describe how far the tail
+                    // has decayed FROM THE PEAK - not the lowest value
+                    // seen since the lock, which on a real swipe is
+                    // whatever tiny sample the finger's acceleration
+                    // happened to start at. Carrying that stale near-zero
+                    // starting value forward as the floor would make every
+                    // ordinary later sample, even mid-decay, look like a
+                    // huge jump relative to it. So the floor is only born
+                    // at the moment the gesture actually turns over (the
+                    // first sample below its own peak), seeded from that
+                    // sample, and only smoothed downward from there.
+                    if (!s._wheelGestureHasDecayed && wheelMagnitude < s._wheelGesturePeak) {
+                        s._wheelGestureHasDecayed = true;
+                        s._wheelGestureFloor = wheelMagnitude;
+                    } else if (s._wheelGestureHasDecayed && wheelMagnitude <= s._wheelGestureFloor) {
                         s._wheelGestureFloor = s._wheelGestureFloor * 0.7 + wheelMagnitude * 0.3;
                     }
                     if (wheelMagnitude > s._wheelGesturePeak) s._wheelGesturePeak = wheelMagnitude;
@@ -7428,6 +7454,7 @@
                     s._wheelGestureLocked = false;
                     s._wheelGestureFloor = undefined;
                     s._wheelGesturePeak = undefined;
+                    s._wheelGestureHasDecayed = false;
                     s._wheelReaccelStreak = 0;
                 }, 400);
             } else {
