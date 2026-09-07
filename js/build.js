@@ -7414,7 +7414,7 @@
                 var wheelReaccelQualifies = false;
                 if (s._wheelGestureFloor !== undefined && s._wheelGestureHasDecayed) {
                     var wheelEffectiveFloor = Math.max(s._wheelGestureFloor, s._wheelGesturePeak * 0.12);
-                    wheelReaccelQualifies = wheelMagnitude > wheelEffectiveFloor * 1.35 + s._wheelGesturePeak * 0.08;
+                    wheelReaccelQualifies = wheelMagnitude > wheelEffectiveFloor * 1.55 + s._wheelGesturePeak * 0.11;
                 }
                 s._wheelReaccelStreak = wheelReaccelQualifies ? (s._wheelReaccelStreak || 0) + 1 : 0;
                 var wheelReaccelerated = s._wheelGestureFloor === undefined || wheelDirectionChanged || s._wheelReaccelStreak >= 2;
