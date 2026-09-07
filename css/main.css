@@ -748,6 +748,24 @@ svg.defs-only {
   transform: translateX(-50%);
   width: auto; }
 
+@media screen and (max-width: 47.99em) {
+  .gallery__image {
+    background-size: contain; }
+    .gallery__image::before {
+      content: "";
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      right: -20px;
+      bottom: -20px;
+      background-image: inherit;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      -webkit-filter: blur(24px) brightness(0.55);
+      filter: blur(24px) brightness(0.55);
+      z-index: -1; } }
+
 .details {
   will-change: transform;
   color: #fff;

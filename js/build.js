@@ -5441,6 +5441,7 @@
             onlyExternal: false,
             threshold: 0,
             touchMoveStopPropagation: true,
+            touchSettleDelay: 0,
             pagination: null,
             paginationClickable: false,
             paginationHide: false,
@@ -6204,6 +6205,16 @@
             if (s.params.swipeHandler) {
                 if (!findElementInEvent(e, s.params.swipeHandler)) return;
             }
+            // A brief settle pause after landing on a slide, mirroring the
+            // desktop wheel's own lock: ignore a new touch drag entirely
+            // (never call isTouched = true) while within the window, so
+            // the frame stays put no matter how the finger moves until it
+            // elapses, then behaves exactly as normal. Opt-in via
+            // touchSettleDelay (0 by default) so it never affects a
+            // Swiper instance that hasn't asked for it.
+            if (s.params.touchSettleDelay && s._touchSettleUntil && Date.now() < s._touchSettleUntil) {
+                return;
+            }
             isTouched = true;
             isMoved = false;
             isScrolling = undefined;
@@ -6606,6 +6617,9 @@
                 s.emit("onTransitionEnd", s);
                 if (s.activeIndex !== s.previousIndex) {
                     s.emit("onSlideChangeEnd", s);
+                    if (s.params.touchSettleDelay) {
+                        s._touchSettleUntil = Date.now() + s.params.touchSettleDelay;
+                    }
                 }
             }
             if (s.params.hashnav && s.hashnav) {
@@ -7995,6 +8009,14 @@ var SH = SH || {};
             longSwipes: true,
             speed: 500,
             resistanceRatio: .4,
+            // This swiper only exists at all on screens wide enough to
+            // opt out of small-screen free scroll (see supportSmallScreen
+            // above), so this naturally reaches tablets and landscape
+            // phones without needing a separate breakpoint of its own.
+            // Mirrors the settle pause the desktop wheel already has
+            // after landing on a slide, tuned for touch rather than
+            // reusing the wheel's timing verbatim.
+            touchSettleDelay: 350,
             pagination: $clientList.find(".swiper-pagination-vertical")[0],
             paginationClickable: true,
             onSlideChangeStart: function() {
