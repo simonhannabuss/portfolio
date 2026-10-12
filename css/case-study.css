@@ -410,6 +410,14 @@
     .cs-stats {
       margin-bottom: 90px; } }
 
+.cs-band--quote {
+  padding-bottom: 56px;
+  padding-top: 48px; }
+  @media screen and (min-width: 48em) {
+    .cs-band--quote {
+      padding-bottom: 80px;
+      padding-top: 70px; } }
+
 .cs-quote {
   margin: 0; }
   .cs-quote p {
