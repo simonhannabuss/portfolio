@@ -411,9 +411,7 @@
       margin-bottom: 90px; } }
 
 .cs-quote {
-  background: #f7f7f7;
-  margin: 64px 0 0;
-  padding: 40px 24px; }
+  margin: 0; }
   .cs-quote p {
     font-size: 18px;
     font-style: italic;
@@ -422,8 +420,5 @@
     max-width: 640px;
     text-align: center; }
   @media screen and (min-width: 48em) {
-    .cs-quote {
-      margin-top: 80px;
-      padding: 60px; }
-      .cs-quote p {
-        font-size: 22px; } }
+    .cs-quote p {
+      font-size: 22px; } }
