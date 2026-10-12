@@ -294,6 +294,12 @@
 .cs-board {
   width: 100%; }
 
+.cs-board-figure {
+  margin: 0; }
+  .cs-board-figure figcaption {
+    margin-top: 20px;
+    text-align: center; }
+
 .cs-zoom {
   cursor: zoom-in;
   display: block; }
