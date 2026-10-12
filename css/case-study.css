@@ -1,0 +1,423 @@
+/**
+ * Case study page ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Builds on main.css (fonts, nav, .content__title). Colours follow the site:
+ * text #333, grey band #f7f7f7, rules #e5e5e5, accent yellow #eed465.
+ */
+.cs {
+  background: #fff;
+  color: #333;
+  font-family: 'Roboto', Arial, sans-serif;
+  font-weight: 300;
+  overflow: hidden; }
+  .cs p {
+    font-size: 16px;
+    line-height: 1.75;
+    margin: 0; }
+  .cs img {
+    display: block;
+    height: auto;
+    max-width: 100%; }
+  .cs h3 {
+    margin: 0; }
+
+/* Shared type ------------------------------------------------------------ */
+.cs-label {
+  display: block;
+  font-family: 'Quicksand', Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1.25;
+  text-transform: lowercase; }
+
+.cs-kicker {
+  font-family: 'Quicksand', Arial, sans-serif;
+  font-size: 13px !important;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1.25 !important;
+  margin: 0 0 16px !important;
+  text-align: center;
+  text-transform: lowercase; }
+
+.cs-title {
+  font-family: 'Quicksand', Arial, sans-serif;
+  font-size: 25px;
+  font-weight: 300;
+  line-height: 1.25;
+  margin: 0 0 40px;
+  text-align: center;
+  text-transform: lowercase; }
+  .cs-title--sub {
+    margin-bottom: 28px; }
+  @media screen and (min-width: 48em) {
+    .cs-title {
+      font-size: 30px;
+      margin-bottom: 70px; }
+      .cs-title--sub {
+        margin-bottom: 40px; }
+      .cs-title--tight {
+        margin-bottom: 60px; } }
+
+.cs-center {
+  text-align: center; }
+
+/* Layout ---------------------------------------------------------------- */
+.cs-band {
+  padding: 64px 20px 72px; }
+  .cs-band--grey {
+    background: #f7f7f7; }
+  @media screen and (min-width: 48em) {
+    .cs-band {
+      padding: 110px 40px 120px; } }
+
+.cs-wrap {
+  margin: 0 auto;
+  max-width: 1230px; }
+
+.cs-lead {
+  margin: 0 auto 48px;
+  max-width: 760px;
+  text-align: center; }
+  .cs-lead p + p {
+    margin-top: 28px; }
+  @media screen and (min-width: 48em) {
+    .cs-lead {
+      margin-bottom: 60px; } }
+
+.cs-cols {
+  display: grid;
+  gap: 40px; }
+  .cs-cols .cs-label {
+    margin-bottom: 14px;
+    text-align: center; }
+  .cs-cols p {
+    text-align: left; }
+  @media screen and (min-width: 48em) {
+    .cs-cols p {
+      text-align: justify; } }
+  .cs-cols--center p {
+    text-align: center; }
+  @media screen and (min-width: 48em) {
+    .cs-cols {
+      gap: 50px;
+      grid-template-columns: 1fr 1fr; } }
+
+.cs-rule {
+  border: 0;
+  border-top: 1px solid #e5e5e5;
+  margin: 64px 0; }
+  @media screen and (min-width: 48em) {
+    .cs-rule {
+      margin: 100px 0; } }
+
+.cs-dotted {
+  border: 0;
+  border-top: 1px dashed #dfdfdf;
+  margin: 56px 0; }
+  @media screen and (min-width: 48em) {
+    .cs-dotted {
+      margin: 80px 0; } }
+
+/* Hero ------------------------------------------------------------------ */
+.cs-hero {
+  padding: 90px 20px 0;
+  text-align: center; }
+  .cs-hero .cs-hero__title {
+    margin-bottom: 40px;
+    text-transform: lowercase; }
+  .cs-hero__intro {
+    font-size: 18px !important;
+    line-height: 1.65 !important;
+    margin: 0 auto !important;
+    max-width: 760px; }
+  @media screen and (min-width: 48em) {
+    .cs-hero {
+      padding-top: 65px; }
+      .cs-hero .cs-hero__title {
+        margin-top: 0; }
+      .cs-hero__intro {
+        font-size: 22px !important; } }
+
+.cs-facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 56px auto 64px;
+  max-width: 1230px;
+  padding: 0; }
+  .cs-facts__item {
+    padding: 12px 20px;
+    position: relative;
+    text-align: center;
+    width: 50%; }
+  .cs-facts dd {
+    font-size: 16px;
+    line-height: 24px;
+    margin: 10px 0 0; }
+  @media screen and (min-width: 48em) {
+    .cs-facts {
+      flex-wrap: nowrap;
+      margin: 80px auto 110px;
+      padding: 0 100px; }
+      .cs-facts__item {
+        flex: 1 1 0;
+        padding: 0 16px;
+        width: auto; }
+        .cs-facts__item + .cs-facts__item::before {
+          background: #bfbfbf;
+          border-radius: 50%;
+          content: "";
+          height: 4px;
+          left: -2px;
+          position: absolute;
+          top: 23px;
+          width: 4px; } }
+
+/* Illustration ------------------------------------------------------------ */
+.cs-illustration {
+  padding-bottom: 48px;
+  padding-top: 48px; }
+  .cs-illustration__inner {
+    margin: 0 auto;
+    max-width: 1088px;
+    position: relative; }
+    .cs-illustration__inner img {
+      position: relative;
+      width: 100%; }
+  .cs-illustration__circle {
+    background: #fff;
+    border-radius: 50%;
+    height: 0;
+    left: 50%;
+    padding-bottom: 69.85%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 69.85%; }
+  @media screen and (min-width: 48em) {
+    .cs-illustration {
+      padding-bottom: 80px;
+      padding-top: 80px; } }
+
+/* Research icons ------------------------------------------------------- */
+.cs-icon {
+  align-items: center;
+  background: #eed465;
+  border-radius: 50%;
+  display: flex;
+  height: 64px;
+  justify-content: center;
+  margin: 0 auto;
+  width: 64px; }
+  .cs-icon img {
+    height: 40px;
+    width: 40px; }
+
+.cs-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px 56px;
+  justify-content: center;
+  list-style: none;
+  margin: 0 0 56px;
+  padding: 0; }
+  .cs-icons li {
+    text-align: center;
+    width: 150px; }
+  .cs-icons .cs-label {
+    margin-top: 16px; }
+  @media screen and (min-width: 48em) {
+    .cs-icons {
+      margin-bottom: 70px; } }
+
+.cs-insights {
+  display: grid;
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+  text-align: center; }
+  .cs-insights li {
+    border-top: 1px solid #e5e5e5;
+    padding: 24px 20px; }
+  .cs-insights .cs-label {
+    margin-bottom: 10px; }
+  @media screen and (min-width: 48em) {
+    .cs-insights {
+      column-gap: 50px;
+      grid-template-columns: 1fr 1fr; } }
+
+/* Customer journeys -------------------------------------------------------- */
+.cs-journey {
+  margin: 0; }
+  .cs-journey + .cs-journey {
+    margin-top: 48px; }
+  .cs-journey__frame {
+    background: #fff;
+    padding: 12px; }
+    .cs-journey__frame img {
+      width: 100%; }
+  .cs-journey figcaption {
+    font-size: 14px;
+    margin-top: 16px;
+    text-align: center; }
+  @media screen and (min-width: 48em) {
+    .cs-journey + .cs-journey {
+      margin-top: 70px; }
+    .cs-journey__frame {
+      padding: 40px; } }
+
+/* Screens ---------------------------------------------------------------- */
+.cs-screen {
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
+  width: 100%; }
+
+.cs-screens {
+  display: grid;
+  gap: 32px 20px;
+  grid-template-columns: repeat(2, 1fr);
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+  .cs-screens li {
+    text-align: center; }
+  .cs-screens .cs-label {
+    margin-top: 20px; }
+  @media screen and (min-width: 38.75em) {
+    .cs-screens {
+      grid-template-columns: repeat(3, 1fr); } }
+  @media screen and (min-width: 64em) {
+    .cs-screens {
+      gap: 30px;
+      grid-template-columns: repeat(5, 1fr); } }
+
+.cs-board {
+  width: 100%; }
+
+.cs-zoom {
+  cursor: zoom-in;
+  display: block; }
+
+/* Decisions --------------------------------------------------------------- */
+.cs-decision {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 40px; }
+  .cs-decision__media {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    max-width: 530px;
+    position: relative;
+    width: 100%; }
+    .cs-decision__media .cs-screen {
+      max-width: 300px;
+      position: relative;
+      width: 62%; }
+  .cs-circle {
+    background: #fff;
+    border-radius: 50%;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%; }
+    .cs-circle::before {
+      content: "";
+      display: block;
+      padding-bottom: 100%; }
+  .cs-decision__copy {
+    max-width: 530px; }
+    .cs-decision__copy h3 {
+      font-family: 'Quicksand', Arial, sans-serif;
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 1.25;
+      margin: 16px 0;
+      text-transform: lowercase; }
+    .cs-decision__copy p {
+      text-align: left; }
+  @media screen and (min-width: 48em) {
+    .cs-decision__copy p {
+      text-align: justify; } }
+  @media screen and (min-width: 48em) {
+    .cs-decision {
+      flex-direction: row;
+      justify-content: space-between; }
+      .cs-decision--flip {
+        flex-direction: row-reverse; }
+      .cs-decision__media,
+      .cs-decision__copy {
+        flex: 0 1 530px; }
+      .cs-decision__media .cs-screen {
+        width: 300px; }
+      .cs-circle {
+        max-width: 528px; } }
+
+/* Testing and outcomes ----------------------------------------------------- */
+.cs-steps {
+  display: grid;
+  gap: 40px 24px;
+  grid-template-columns: repeat(2, 1fr);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: center; }
+  .cs-steps h3 {
+    font-family: 'Quicksand', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin: 14px 0;
+    text-transform: lowercase; }
+  @media screen and (min-width: 48em) {
+    .cs-steps {
+      grid-template-columns: repeat(4, 1fr); }
+      .cs-steps li {
+        padding: 32px 28px; } }
+
+.cs-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px 40px;
+  justify-content: center;
+  list-style: none;
+  margin: 0 0 64px;
+  padding: 0; }
+  .cs-stats li {
+    text-align: center;
+    width: 140px; }
+  .cs-stats svg {
+    display: block;
+    height: 64px;
+    margin: 0 auto 20px;
+    width: 64px; }
+  .cs-stats strong {
+    display: block;
+    font-family: 'Quicksand', Arial, sans-serif;
+    font-size: 40px;
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    text-transform: lowercase; }
+  @media screen and (min-width: 48em) {
+    .cs-stats {
+      margin-bottom: 90px; } }
+
+.cs-quote {
+  background: #f7f7f7;
+  margin: 64px 0 0;
+  padding: 40px 24px; }
+  .cs-quote p {
+    font-size: 18px;
+    font-style: italic;
+    line-height: 1.65;
+    margin: 0 auto;
+    max-width: 640px;
+    text-align: center; }
+  @media screen and (min-width: 48em) {
+    .cs-quote {
+      margin-top: 80px;
+      padding: 60px; }
+      .cs-quote p {
+        font-size: 22px; } }
