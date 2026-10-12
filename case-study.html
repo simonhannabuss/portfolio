@@ -5,15 +5,16 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="A closer look at Simon Hannabuss's UX/UI design process — research, wireframes and product thinking behind real client projects.">
+	<meta name="description" content="Wickes picking app: a UX/UI case study by Simon Hannabuss. Digitising click and collect in Wickes stores with a robust Android app and external barcode scanners.">
 
-	<title>Simon Hannabuss</title>
+	<title>Wickes picking app · Case study · Simon Hannabuss</title>
 
 	<link rel="shortcut icon" href="favicon.ico">
 
-	<link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500|Roboto:300" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500|Roboto:300,300i" rel="stylesheet" type="text/css">
 
 	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/case-study.css">
 
 	<script src="js/vendor/modernizr.min.js"></script>
 
@@ -41,17 +42,209 @@
 			<a href="#js-nav" class="nav-btn js-nav-btn-active" id="js-toggle-nav"><span>Open navigation</span></a>
 		</div>
 
-		<section class="content">
-			<div class="content__inner">
-				<h1 class="content__title">case study</h1>
+		<main class="cs">
 
-				<div class="content__body">
-					<div class="content__copy">
-						<p>Case study coming soon.</p>
-					</div>
+			<!-- Hero -->
+			<header class="cs-hero">
+				<h1 class="content__title cs-hero__title">wickes picking app</h1>
+				<p class="cs-kicker">case study · retail · android app</p>
+				<p class="cs-hero__intro">The nationwide digitisation of click and collect within Wickes stores. A prominent UK DIY retailer. Replacing printed receipts, &amp; hand made note taking, with a robust Android app with attached external barcode scanning capabilities.</p>
+
+				<dl class="cs-facts">
+					<div class="cs-facts__item"><dt class="cs-label">client</dt><dd>Wickes</dd></div>
+					<div class="cs-facts__item"><dt class="cs-label">role</dt><dd>UX Manager</dd></div>
+					<div class="cs-facts__item"><dt class="cs-label">timeline</dt><dd>2 Months</dd></div>
+					<div class="cs-facts__item"><dt class="cs-label">technology</dt><dd>Android</dd></div>
+					<div class="cs-facts__item"><dt class="cs-label">outcome</dt><dd>Nationwide rollout</dd></div>
+				</dl>
+			</header>
+
+			<!-- Illustration -->
+			<section class="cs-band cs-band--grey cs-illustration">
+				<div class="cs-illustration__inner">
+					<span class="cs-illustration__circle" aria-hidden="true"></span>
+					<img src="images/wickes/hand-illustration.png" width="1632" height="1089" alt="Pen sketch of a hand holding an Android phone showing the picking app dashboard">
 				</div>
-			</div>
-		</section>
+			</section>
+
+			<!-- Brief and research -->
+			<section class="cs-band">
+				<div class="cs-wrap">
+					<h2 class="cs-title">the brief</h2>
+					<div class="cs-cols">
+						<div class="cs-col">
+							<h3 class="cs-label">the problem</h3>
+							<p>Click &amp; collect orders were printed off as receipts, and store colleagues walked the aisles filling a basket by hand. There was no live view of which orders were urgent, who was picking what, or whether stock was on the shelf. Wickes wanted the whole process digitised on Android devices fitted with external barcode scanners. The ux and ui needed to be highly functional and simple.</p>
+						</div>
+						<div class="cs-col">
+							<h3 class="cs-label">my role</h3>
+							<p>During just under a year working directly with Wickes as a freelance UX Manager, I was the sole UX principle designer on this project, which ran for a couple of months. I worked alongside a product owner and stakeholders representing departments across the business, bringing their needs, limitations and expectations together into one workflow.</p>
+						</div>
+					</div>
+
+					<hr class="cs-rule">
+
+					<h2 class="cs-title cs-title--tight">research</h2>
+					<ul class="cs-icons">
+						<li><span class="cs-icon"><img src="images/wickes/icon-stakeholder-interviews.png" alt=""></span><span class="cs-label">stakeholder interviews</span></li>
+						<li><span class="cs-icon"><img src="images/wickes/icon-store-workflow.png" alt=""></span><span class="cs-label">store workflow mapping</span></li>
+						<li><span class="cs-icon"><img src="images/wickes/icon-customer-journey.png" alt=""></span><span class="cs-label">customer journey mapping</span></li>
+					</ul>
+
+					<h3 class="cs-label cs-center">key insights</h3>
+					<ol class="cs-insights">
+						<li><span class="cs-label">01</span><p>Paper receipts gave stores no live view of priority, progress or who was working on which order.</p></li>
+						<li><span class="cs-label">02</span><p>Every department touching click &amp; collect had its own needs, limits and expectations, so the workflow had to work for all of them.</p></li>
+						<li><span class="cs-label">03</span><p>The hardware shaped the experience: robust industrial devices with external scanners meant designing scan-first flows for the shop floor.</p></li>
+						<li><span class="cs-label">04</span><p>The status of every new or pending order had to clear to all in-store employees. Labelling and app way-finding had to be simple and clear to avoid mistakes.</p></li>
+					</ol>
+				</div>
+			</section>
+
+			<!-- Discovery -->
+			<section class="cs-band cs-band--grey">
+				<div class="cs-wrap">
+					<h2 class="cs-title cs-title--sub">the discovery</h2>
+					<p class="cs-kicker">consumer behaviour · trades vs customer</p>
+					<div class="cs-lead">
+						<p>We spent a lot of time understanding how stores actually work: talking to stakeholders and departments, mapping workflows, and working through the constraints of the hardware and the shop floor.</p>
+						<p>Alongside the colleague-facing app, I mapped the wider customer journey, following TradePro customers, and more general consumers from first enquiry through to collecting materials in store. The differences and behaviours of professionals and more the domestic casual customers needed to be deeply understood.</p>
+					</div>
+
+					<figure class="cs-journey">
+						<div class="cs-journey__frame"><a class="cs-zoom" href="images/wickes/journey-tradepro.png" target="_blank" rel="noopener"><img src="images/wickes/journey-tradepro.png" width="2460" height="881" loading="lazy" alt="Wickes customer journey map for a TradePro customer"></a></div>
+						<figcaption>tradepro journey</figcaption>
+					</figure>
+					<figure class="cs-journey">
+						<div class="cs-journey__frame"><a class="cs-zoom" href="images/wickes/journey-rental-tenant.png" target="_blank" rel="noopener"><img src="images/wickes/journey-rental-tenant.png" width="2460" height="1190" loading="lazy" alt="Wickes customer journey map for a twenty-something rental tenant"></a></div>
+						<figcaption>customer journey</figcaption>
+					</figure>
+				</div>
+			</section>
+
+			<!-- Full picture -->
+			<section class="cs-band">
+				<div class="cs-wrap">
+					<h2 class="cs-title cs-title--sub">the full picture</h2>
+					<p class="cs-kicker">94 screens</p>
+					<div class="cs-lead">
+						<p>The MVP covered upto 100 screens, from the dashboard and picking flows to search, barcode scanning, error states and handovers between colleagues. Every state was designed so developers and stakeholders could see exactly how the app should behave on the shop floor.</p>
+					</div>
+
+					<ul class="cs-screens">
+						<li><img class="cs-screen" src="images/wickes/screen-splash.png" width="720" height="1280" loading="lazy" alt="Splash screen"><span class="cs-label">splash</span></li>
+						<li><img class="cs-screen" src="images/wickes/screen-dashboard.png" width="720" height="1280" loading="lazy" alt="Dashboard screen"><span class="cs-label">dashboard</span></li>
+						<li><img class="cs-screen" src="images/wickes/screen-navigation.jpg" width="720" height="1280" loading="lazy" alt="Navigation drawer"><span class="cs-label">navigation</span></li>
+						<li><img class="cs-screen" src="images/wickes/screen-order-ready.png" width="720" height="1280" loading="lazy" alt="Order ready for picking"><span class="cs-label">order ready</span></li>
+						<li><img class="cs-screen" src="images/wickes/screen-picking.png" width="720" height="1280" loading="lazy" alt="Picking an item"><span class="cs-label">picking</span></li>
+					</ul>
+
+					<hr class="cs-dotted">
+
+					<a class="cs-zoom" href="images/wickes/design-board.png" target="_blank" rel="noopener"><img class="cs-board" src="images/wickes/design-board.png" width="2460" height="1475" loading="lazy" alt="Overview of every screen in the Figma design file, one row per flow"></a>
+				</div>
+			</section>
+
+			<!-- Key design decisions -->
+			<section class="cs-band cs-band--grey">
+				<div class="cs-wrap">
+					<h2 class="cs-title">key design decisions</h2>
+
+					<article class="cs-decision">
+						<div class="cs-decision__media"><span class="cs-circle" aria-hidden="true"></span><img class="cs-screen" src="images/wickes/screen-dashboard.png" width="720" height="1280" loading="lazy" alt="Dashboard showing high priority, in progress and new orders"></div>
+						<div class="cs-decision__copy">
+							<span class="cs-label">01</span>
+							<h3>workload at a glance</h3>
+							<p>The dashboard opens on what matters most right now: how many orders are high priority, in progress or new, with quick routes into the full picking list, completed picks and each colleague’s own picks.</p>
+						</div>
+					</article>
+
+					<hr class="cs-dotted">
+
+					<article class="cs-decision cs-decision--flip">
+						<div class="cs-decision__media"><span class="cs-circle" aria-hidden="true"></span><img class="cs-screen" src="images/wickes/screen-orders-summary.png" width="720" height="1898" loading="lazy" alt="Picks list grouped by status with colour-coded tags"></div>
+						<div class="cs-decision__copy">
+							<span class="cs-label">02</span>
+							<h3>a status system everyone agreed on</h3>
+							<p>On a busy shop floor, order status has to read in a second. Working within Wickes’ digital and brand guidelines, I spent a lot of time refining the colour codes for each status and tag (high priority, in progress, new, low stock, time-critical) and agreed every one with stakeholders across the business.</p>
+						</div>
+					</article>
+
+					<hr class="cs-dotted">
+
+					<article class="cs-decision">
+						<div class="cs-decision__media"><span class="cs-circle" aria-hidden="true"></span><img class="cs-screen" src="images/wickes/screen-quantity-overlay.png" width="720" height="1280" loading="lazy" alt="Quantity overlay: 250 bricks required, 243 available"></div>
+						<div class="cs-decision__copy">
+							<span class="cs-label">03</span>
+							<h3>built for real building products</h3>
+							<p>Picking at Wickes is rarely one item at a time. A single order might need 250 bricks when only 243 are available. The scan overlay lets colleagues scan multiple times or adjust quantities by hand, and makes shortfalls obvious before an order goes out incomplete.</p>
+						</div>
+					</article>
+
+					<hr class="cs-dotted">
+
+					<article class="cs-decision cs-decision--flip">
+						<div class="cs-decision__media"><span class="cs-circle" aria-hidden="true"></span><img class="cs-screen" src="images/wickes/screen-switch-picker.png" width="720" height="1280" loading="lazy" alt="Switching pickers confirmation dialog"></div>
+						<div class="cs-decision__copy">
+							<span class="cs-label">04</span>
+							<h3>safe handover between colleagues</h3>
+							<p>Orders can change hands mid-pick, between shifts or breaks. Each order locks to the colleague picking it, and taking one over is a deliberate, confirmed step, so two people never pick the same order.</p>
+						</div>
+					</article>
+				</div>
+			</section>
+
+			<!-- Testing, rollout and outcomes -->
+			<section class="cs-band">
+				<div class="cs-wrap">
+					<h2 class="cs-title">testing &amp; rollout</h2>
+					<ol class="cs-steps">
+						<li><span class="cs-icon"><img src="images/wickes/icon-user-testing.png" alt=""></span><h3>user testing</h3><p>A round of testing with store colleagues on the designs.</p></li>
+						<li><span class="cs-icon"><img src="images/wickes/icon-iterate.png" alt=""></span><h3>iterate</h3><p>Feedback shaped a further set of updates.</p></li>
+						<li><span class="cs-icon"><img src="images/wickes/icon-store-trial.png" alt=""></span><h3>store trial</h3><p>The app was built and tested in selected stores.</p></li>
+						<li><span class="cs-icon"><img src="images/wickes/icon-nationwide.png" alt=""></span><h3>nationwide</h3><p>Rolled out to Wickes stores across the country.</p></li>
+					</ol>
+
+					<hr class="cs-dotted">
+
+					<h2 class="cs-title cs-title--tight">outcomes</h2>
+					<ul class="cs-stats">
+						<li>
+							<svg viewBox="0 0 64 64" aria-hidden="true"><polygon points="32,4.3 64,59.7 0,59.7" fill="#ee162d"/></svg>
+							<strong>100</strong><span class="cs-label">screens designed</span>
+						</li>
+						<li>
+							<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#7e4deb"/></svg>
+							<strong>1</strong><span class="cs-label">user testing round</span>
+						</li>
+						<li>
+							<svg viewBox="0 0 64 64" aria-hidden="true"><polygon points="32,0 64,32 32,64 0,32" fill="#eee200"/></svg>
+							<strong>trial</strong><span class="cs-label">in selected stores</span>
+						</li>
+						<li>
+							<svg viewBox="0 0 64 64" aria-hidden="true"><polygon points="32,0 59.71,16 59.71,48 32,64 4.29,48 4.29,16" fill="#4ae79e"/></svg>
+							<strong>uk</strong><span class="cs-label">nationwide rollout</span>
+						</li>
+					</ul>
+
+					<div class="cs-cols cs-cols--center">
+						<div class="cs-col">
+							<h3 class="cs-label">what worked</h3>
+							<p>Spending real time with stakeholders and departments up front, so the status colours and workflows were agreed by everyone before the app was built. Making sure everyone is aligned with the design process and challenges, was really key.</p>
+						</div>
+						<div class="cs-col">
+							<h3 class="cs-label">what i’d do differently</h3>
+							<p>If the project engagement was longer it would been great to really explore further functionality with the app bringin it more inline with the really expansive experimental nature of my original TradePro and customer journeys.</p>
+						</div>
+					</div>
+
+					<blockquote class="cs-quote">
+						<p>“Really great team. It was a joy to work on this project. Communication was good, problems were solved, the product owner was exceptional in steering and navigating this rather complex project.”</p>
+					</blockquote>
+				</div>
+			</section>
+
+		</main>
 	</div>
 
 	<script src="js/build.js"></script>
