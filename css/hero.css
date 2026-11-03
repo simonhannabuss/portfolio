@@ -11,7 +11,7 @@
 .hero {
   --hero-video-h: min(max(100vh, 56.25vw), 96vw);
   /* Smallest breath lets the two biggest flares peek out; the breath
-     then grows it to ~92% of the video height, covering everything. */
+     then grows it to ~88% of the video height. */
   --hero-circle: calc(var(--hero-video-h) * 0.79);
   --hero-drift-x: 0px;
   --hero-drift-y: 0px;
@@ -64,7 +64,7 @@
     transform: scale(1); }
   50% {
     opacity: 1;
-    transform: scale(1.165); } }
+    transform: scale(1.115); } }
 
 /* Name and discipline ------------------------------------------------------ */
 .hero__text {
