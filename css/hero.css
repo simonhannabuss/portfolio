@@ -14,7 +14,7 @@
      then grows it to ~88% of the video height. */
   --hero-circle: calc(var(--hero-video-h) * 0.79);
   --hero-zoom: 1;
-  background: #fefefe;
+  background: #fff;
   color: #000;
   height: 100vh;
   height: 100svh;
@@ -73,6 +73,17 @@
     transform: scale(1.115); } }
 
 /* Name and discipline ------------------------------------------------------ */
+/* The labels sit on an invisible ring around the sun's centre: .hero__orbit
+   is a zero-size point at the centre that turns with the sun. */
+.hero__orbit {
+  height: 0;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: rotate(var(--hero-spin, 0deg));
+  width: 0;
+  z-index: 2; }
+
 .hero__text {
   font-family: 'Quicksand', Arial, sans-serif;
   font-size: 18px;
@@ -81,31 +92,30 @@
   line-height: 1.2;
   margin: 0;
   position: absolute;
-  right: 0;
-  text-align: center;
   text-transform: lowercase;
-  z-index: 2; }
+  transform: translateX(-50%);
+  white-space: nowrap; }
+  .hero__text span {
+    display: inline-block;
+    white-space: pre; }
 
 .hero__name {
-  bottom: calc(50% + var(--hero-circle) / 2 + 56px); }
+  bottom: calc(var(--hero-circle) / 2 + 56px); }
 
 .hero__role {
-  top: calc(50% + var(--hero-circle) / 2 + 56px); }
+  top: calc(var(--hero-circle) / 2 + 56px); }
 
 /* Wide enough screens: either side of the circle, as in Figma. */
 @media screen and (min-width: 48em) and (min-aspect-ratio: 4 / 3) {
   .hero__text {
-    left: auto;
-    right: auto;
-    top: 50%;
     bottom: auto;
-    transform: translateY(-50%); }
+    left: auto;
+    top: -0.6em;
+    transform: none; }
   .hero__name {
-    right: calc(50% + var(--hero-circle) / 2 + 110px);
-    text-align: right; }
+    right: calc(var(--hero-circle) / 2 + 110px); }
   .hero__role {
-    left: calc(50% + var(--hero-circle) / 2 + 110px);
-    text-align: left; } }
+    left: calc(var(--hero-circle) / 2 + 110px); } }
 
 /* Sound toggle ------------------------------------------------------------- */
 .hero__sound {
