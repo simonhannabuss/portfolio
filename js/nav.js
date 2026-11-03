@@ -3,10 +3,10 @@
  *
  * 1. Menu button + slide dots go dark over light photos. The page checks the
  *    actual part of the photo sitting behind them, so it follows each image.
- * 2. Inverted band: while the black menu panel wipes across (open or close),
- *    a band riding its edge shows the page underneath inverted.
+ * 2. Inverted wipe (CSS): the menu panel sweeps across as an inverted view of
+ *    the page, then fades to black; closing runs the other way.
  * 3. Page-to-page wipe: following a menu link, the new page opens under the
- *    black panel, which then wipes back to the side, with the same band.
+ *    black panel, which fades to the inverted page and sweeps back.
  */
 (function () {
     var root = document.documentElement;
@@ -100,47 +100,9 @@
         window.addEventListener("load", checkTone);
     }
 
-    // 2. Inverted band on the wipe's edge --------------------------------------
-    var band = document.createElement("div");
-    band.className = "nav-invert";
-    band.setAttribute("aria-hidden", "true");
-    nav.parentNode.insertBefore(band, nav);
-
-    var BAND = 0.3;             // widest the band gets, as a share of the screen
-    var wiping = false;
-    var wipeUntil = 0;
-
-    var drawBand = function () {
-        var vw = window.innerWidth;
-        var w = nav.getBoundingClientRect().width;
-        var p = Math.max(0, Math.min(1, w / vw));
-        var bw = Math.sin(Math.PI * p) * BAND * vw;   // 0 when closed or fully open
-        if (bw < 1) {
-            band.style.width = "0";
-        } else {
-            band.style.width = bw.toFixed(1) + "px";
-            band.style.transform = "translate3d(" + w.toFixed(1) + "px, 0, 0)";
-        }
-    };
-
-    var wipe = function () {
-        if (reduceMotion) { return; }
-        wipeUntil = performance.now() + 1600;     // nav transition: 0.2s delay + 0.6s ease, long tail
-        if (wiping) { return; }
-        wiping = true;
-        var step = function (now) {
-            drawBand();
-            if (now < wipeUntil) {
-                requestAnimationFrame(step);
-            } else {
-                wiping = false;
-                band.style.width = "0";
-            }
-        };
-        requestAnimationFrame(step);
-    };
-
-    btn.addEventListener("click", wipe);
+    // 2. Inverted wipe: handled in CSS (main.css, "Inverted menu wipe"). The
+    //    panel is an inverted view of the page while it sweeps, then fades
+    //    to black; closing runs backwards.
 
     // 3. Page-to-page wipe -------------------------------------------------------
     var KEY = "navWipe";
@@ -167,12 +129,15 @@
         if (reduceMotion) {
             root.classList.remove("is-arriving");
         } else {
-            var reveal = function () {
+            // Black fades to an inverted view of the new page, then the
+            // inverted panel sweeps back to the side.
+            setTimeout(function () {
                 void nav.offsetWidth;                      // lock in the covered state
-                root.classList.remove("is-arriving");      // CSS transition wipes it back
-                wipe();
-            };
-            setTimeout(function () { requestAnimationFrame(reveal); }, 120);
+                root.classList.add("is-uncovering");
+                setTimeout(function () {
+                    root.classList.remove("is-arriving", "is-uncovering");
+                }, 520);
+            }, 150);
         }
     }
 
@@ -180,7 +145,7 @@
     window.addEventListener("pageshow", function (e) {
         if (!e.persisted) { return; }
         store(false);
-        root.classList.remove("is-arriving");
+        root.classList.remove("is-arriving", "is-uncovering");
         if (nav.classList.contains("is-nav-open")) { btn.click(); }
     });
 })();
