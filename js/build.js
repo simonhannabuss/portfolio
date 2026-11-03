@@ -8029,7 +8029,7 @@ var SH = SH || {};
             onSlideChangeEnd: function() {
                 if (!props.isSmallScreen) {
                     // Look the gallery up from the active slide itself, so a
-                    // slide without a gallery (the home-v2 hero) can sit in
+                    // slide without a gallery (the sun hero) can sit in
                     // front without shifting every project by one.
                     $(clients.slides[clients.activeIndex]).find('.gallery__item[data-swiper-slide-index="0"]').addClass("is-expanding");
                 }

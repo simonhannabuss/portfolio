@@ -1,5 +1,5 @@
 /**
- * Sun hero (home-v2.html)
+ * Sun hero (home page, index.html)
  * - picks the small or large sun video and only plays it while the hero is in view
  * - breathes the yellow circle; while the mouse moves the breath pauses and the sun
  *   and circle slowly grow/shrink with the cursor and the sun slowly turns (right =
