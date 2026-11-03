@@ -4,6 +4,8 @@
  * - breathes the yellow circle; while the mouse moves the breath pauses and the sun
  *   and circle slowly grow/shrink with the cursor and the sun slowly turns (right =
  *   clockwise, left = anticlockwise), then the breath resumes seamlessly
+ * - the name and title swing round the sun's centre with it, with a directional
+ *   motion blur per letter (stronger on the outer letters) while they move
  * - optional ambient sound, off by default, toggled by the button in the corner
  * Respects prefers-reduced-motion: the poster frame shows and nothing moves.
  */
@@ -86,6 +88,8 @@
         var SPIN_MAX = 8;            // fastest the sun turns, degrees per second
         var SPIN_PER_PX = 0.012;     // turn speed per px/s of sideways mouse speed
         var IDLE_MS = 450;           // how long still counts as "stopped"
+        var LEVEL_EASE = 0.12;       // how gently the sun and text return to level once still
+        var BLUR_K = 0.14;           // motion blur strength (px of blur per px/s of letter speed)
         var EASE = 0.04;             // softness of every change (per 60fps frame)
 
         var canHover = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -100,8 +104,10 @@
         var angle = 0;
         var lastX = null;
         var lastXTime = 0;
+        var omega = 0;               // smoothed actual turn speed, radians per second
 
         hero.classList.add("is-js-breath");
+        var letters = setupLetters();
 
         if (canHover) {
             hero.addEventListener("mousemove", function (e) {
@@ -138,10 +144,23 @@
 
             breathRate += ((moving ? 0 : 1) - breathRate) * k;
             zoom += ((moving ? zoomTarget : 1) - zoom) * k;
-            // The turn eases in and out more gently still, and the sun keeps
-            // whatever angle it reaches.
+            // The turn eases in and out more gently still. Once the mouse is
+            // still, the sun and its text drift slowly back to level so the
+            // text never ends up tilted or upside down.
             spin += ((moving ? spinTarget : 0) - spin) * k * 0.6;
-            angle = (angle + spin * dt) % 360;
+            var prevAngle = angle;
+            angle += spin * dt;
+            angle = ((angle + 180) % 360 + 360) % 360 - 180;     // keep within -180..180
+            if (!moving) {
+                angle += (0 - angle) * k * LEVEL_EASE;
+            }
+            if (dt > 0) {
+                var turned = angle - prevAngle;
+                if (turned > 180) { turned -= 360; }
+                if (turned < -180) { turned += 360; }
+                omega += ((turned * Math.PI / 180) / dt - omega) * k * 2;
+            }
+            blurLetters(Math.abs(omega));
             phase = (phase + dt * breathRate * 2 * Math.PI / BREATH_SECONDS) % (2 * Math.PI);
 
             var b = (1 - Math.cos(phase)) / 2;   // 0 = smallest, 1 = largest
@@ -151,6 +170,86 @@
             hero.style.setProperty("--hero-spin", angle.toFixed(3) + "deg");
         };
         requestAnimationFrame(frame);
+    }
+
+    // Directional text blur ----------------------------------------------------
+    // Each letter gets its own SVG blur, stretched along the way that letter is
+    // travelling as the text swings around the sun. Letters further from the
+    // centre travel faster, so they blur more: the outer ends smear while the
+    // inner ends stay sharp. No blur at all when the text is still.
+    function setupLetters() {
+        var labels = hero.querySelectorAll(".hero__text");
+        var orbit = hero.querySelector(".hero__orbit");
+        if (!labels.length || !orbit) { return []; }
+        var NS = "http://www.w3.org/2000/svg";
+        var svg = document.createElementNS(NS, "svg");
+        svg.setAttribute("aria-hidden", "true");
+        svg.setAttribute("width", "0");
+        svg.setAttribute("height", "0");
+        svg.style.position = "absolute";
+        var defs = document.createElementNS(NS, "defs");
+        svg.appendChild(defs);
+        hero.appendChild(svg);
+
+        var list = [];
+        Array.prototype.forEach.call(labels, function (label, li) {
+            var text = label.textContent;
+            label.setAttribute("aria-label", text);
+            label.textContent = "";
+            text.split("").forEach(function (ch, ci) {
+                var span = document.createElement("span");
+                span.setAttribute("aria-hidden", "true");
+                span.textContent = ch;
+                label.appendChild(span);
+                if (ch === " ") { return; }
+                var id = "hero-blur-" + li + "-" + ci;
+                var filter = document.createElementNS(NS, "filter");
+                filter.setAttribute("id", id);
+                filter.setAttribute("x", "-200%");
+                filter.setAttribute("y", "-150%");
+                filter.setAttribute("width", "500%");
+                filter.setAttribute("height", "400%");
+                var blur = document.createElementNS(NS, "feGaussianBlur");
+                blur.setAttribute("stdDeviation", "0 0");
+                filter.appendChild(blur);
+                defs.appendChild(filter);
+                list.push({ el: span, blur: blur, id: id, x: 0, y: 0, on: false });
+            });
+        });
+
+        // Where each letter sits relative to the sun's centre, measured level.
+        function measure() {
+            var saved = orbit.style.transform;
+            orbit.style.transform = "none";
+            var o = orbit.getBoundingClientRect();
+            list.forEach(function (l) {
+                var r = l.el.getBoundingClientRect();
+                l.x = r.left + r.width / 2 - o.left;
+                l.y = r.top + r.height / 2 - o.top;
+            });
+            orbit.style.transform = saved;
+        }
+        measure();
+        window.addEventListener("resize", measure);
+        window.addEventListener("load", measure);
+        if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measure); }
+        return list;
+    }
+
+    function blurLetters(w) {
+        if (!letters || !letters.length) { return; }
+        letters.forEach(function (l) {
+            // Travel direction is at right angles to the line from the centre,
+            // so a letter beside the sun blurs up/down, one above it left/right.
+            var sx = BLUR_K * w * Math.abs(l.y);
+            var sy = BLUR_K * w * Math.abs(l.x);
+            if (sx < 0.15 && sy < 0.15) {
+                if (l.on) { l.el.style.filter = ""; l.on = false; }
+                return;
+            }
+            l.blur.setAttribute("stdDeviation", sx.toFixed(2) + " " + sy.toFixed(2));
+            if (!l.on) { l.el.style.filter = "url(#" + l.id + ")"; l.on = true; }
+        });
     }
 
     // Ambient sound -------------------------------------------------------------
