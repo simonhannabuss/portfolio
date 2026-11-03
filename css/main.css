@@ -678,6 +678,33 @@ svg.defs-only {
     .nav__badge {
       right: 7%; } }
 
+/* Menu button and slide dots over light photos (set by js/nav.js) */
+.is-btn-dark .nav-btn:not(.is-nav-open) {
+  color: #333; }
+
+.is-dots-dark .swiper-pagination-vertical > .swiper-pagination-bullet {
+  background: #333; }
+
+/* Inverted band riding the edge of the black menu wipe (js/nav.js) */
+.nav-invert {
+  -webkit-backdrop-filter: invert(1);
+  backdrop-filter: invert(1);
+  height: 100vh;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 0;
+  will-change: transform, width;
+  z-index: 19; }
+
+/* Arriving from a menu link: start with the panel covering the page, then
+   js/nav.js removes this so it wipes back to the side. */
+.is-arriving .nav {
+  -webkit-transition: none !important;
+  transition: none !important;
+  width: 100vw !important; }
+
 .nav-overlay-shield {
   background: white;
   content: "";
