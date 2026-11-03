@@ -57,6 +57,13 @@
     height: 100%;
     width: 100%; }
 
+/* With JavaScript the breath is driven by js/hero.js, so it can pause
+   while the mouse moves and pick up again exactly where it left off. */
+.hero.is-js-breath .hero__circle::before {
+  animation: none;
+  opacity: var(--hero-breath-opacity, 0.94);
+  transform: scale(var(--hero-breath, 1)); }
+
 @keyframes hero-breathe {
   0%, 100% {
     opacity: 0.94;

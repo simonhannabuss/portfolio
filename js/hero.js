@@ -1,7 +1,8 @@
 /**
  * Sun hero (home-v2.html)
  * - picks the small or large sun video and only plays it while the hero is in view
- * - gently grows the sun and circle as the mouse nears them, shrinks them as it moves away
+ * - breathes the yellow circle; while the mouse moves the breath pauses and the sun
+ *   and circle slowly grow/shrink with the cursor, then the breath resumes seamlessly
  * - optional ambient sound, off by default, toggled by the button in the corner
  * Respects prefers-reduced-motion: the poster frame shows and nothing moves.
  */
@@ -70,45 +71,64 @@
     window.addEventListener("load", syncActive);
     syncActive();
 
-    // Mouse zoom ------------------------------------------------------------
-    // The sun and circle grow a little as the cursor nears the centre and
-    // shrink a little as it moves out towards the edges.
-    var canHover = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    if (!reduceMotion && canHover) {
-        var RANGE = 0.03;        // +/- 3% either side of normal size
-        var target = 1;
-        var current = 1;
-        var running = false;
+    // Breathing and mouse zoom ------------------------------------------------
+    // Mouse still: the yellow circle breathes in and out.
+    // Mouse moving: the breath eases to a pause wherever it is, and the sun
+    // and circle slowly grow as the cursor nears the centre / shrink as it
+    // moves towards the edges.
+    // Mouse stops: the zoom eases back to normal and the breath carries on
+    // from exactly where it paused, so the hand-over is seamless.
+    if (!reduceMotion) {
+        var BREATH_SECONDS = 9;      // one full in-and-out
+        var BREATH_GROW = 0.115;     // largest breath is 11.5% bigger
+        var ZOOM_RANGE = 0.03;       // mouse zoom, +/- 3%
+        var IDLE_MS = 450;           // how long still counts as "stopped"
+        var EASE = 0.04;             // softness of every change (per 60fps frame)
 
-        hero.addEventListener("mousemove", function (e) {
-            var r = hero.getBoundingClientRect();
-            var dx = (e.clientX - r.left) / r.width - 0.5;
-            var dy = (e.clientY - r.top) / r.height - 0.5;
-            // 0 at the centre, 1 at the edges/corners
-            var d = Math.min(1, Math.sqrt(dx * dx + dy * dy) / 0.5);
-            target = 1 + RANGE - d * 2 * RANGE;
-            start();
-        });
-        hero.addEventListener("mouseleave", function () {
-            target = 1;
-            start();
-        });
+        var canHover = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+        var phase = 0;               // 0..2PI through the breath
+        var breathRate = 1;          // 1 = breathing, 0 = paused (eased)
+        var zoom = 1;
+        var zoomTarget = 1;
+        var lastMove = 0;
+        var lastTime = 0;
 
-        function start() {
-            if (!running) {
-                running = true;
-                requestAnimationFrame(tick);
-            }
+        hero.classList.add("is-js-breath");
+
+        if (canHover) {
+            hero.addEventListener("mousemove", function (e) {
+                var r = hero.getBoundingClientRect();
+                var dx = (e.clientX - r.left) / r.width - 0.5;
+                var dy = (e.clientY - r.top) / r.height - 0.5;
+                // 0 at the centre, 1 at the edges/corners
+                var d = Math.min(1, Math.sqrt(dx * dx + dy * dy) / 0.5);
+                zoomTarget = 1 + ZOOM_RANGE - d * 2 * ZOOM_RANGE;
+                lastMove = performance.now();
+            });
+            hero.addEventListener("mouseleave", function () {
+                lastMove = 0;
+            });
         }
-        function tick() {
-            current += (target - current) * 0.04;
-            hero.style.setProperty("--hero-zoom", current.toFixed(4));
-            if (Math.abs(target - current) > 0.0005) {
-                requestAnimationFrame(tick);
-            } else {
-                running = false;
-            }
-        }
+
+        var frame = function (now) {
+            requestAnimationFrame(frame);
+            var dt = lastTime ? Math.min(0.1, (now - lastTime) / 1000) : 0;
+            lastTime = now;
+            if (!inView) { return; }
+
+            var moving = lastMove && now - lastMove < IDLE_MS;
+            var k = 1 - Math.pow(1 - EASE, dt * 60);
+
+            breathRate += ((moving ? 0 : 1) - breathRate) * k;
+            zoom += ((moving ? zoomTarget : 1) - zoom) * k;
+            phase = (phase + dt * breathRate * 2 * Math.PI / BREATH_SECONDS) % (2 * Math.PI);
+
+            var b = (1 - Math.cos(phase)) / 2;   // 0 = smallest, 1 = largest
+            hero.style.setProperty("--hero-breath", (1 + b * BREATH_GROW).toFixed(4));
+            hero.style.setProperty("--hero-breath-opacity", (0.94 + b * 0.06).toFixed(3));
+            hero.style.setProperty("--hero-zoom", zoom.toFixed(4));
+        };
+        requestAnimationFrame(frame);
     }
 
     // Ambient sound -------------------------------------------------------------
