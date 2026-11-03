@@ -100,6 +100,36 @@
         window.addEventListener("load", checkTone);
     }
 
+    // Sun loop at the top of the menu; plays only while the menu is open.
+    var sun = document.createElement("video");
+    sun.className = "nav__sun";
+    sun.muted = true;
+    sun.loop = true;
+    sun.playsInline = true;
+    sun.setAttribute("playsinline", "");
+    sun.setAttribute("muted", "");
+    sun.setAttribute("aria-hidden", "true");
+    sun.preload = "none";
+    sun.poster = "images/hero/nav-sun-poster.jpg";
+    sun.src = "images/hero/nav-sun.mp4";
+    nav.appendChild(sun);
+    root.classList.add("has-nav-sun");
+    var sunTimer = null;
+    var syncSun = function () {
+        clearTimeout(sunTimer);
+        if (nav.classList.contains("is-nav-open")) {
+            if (!reduceMotion) {
+                var p = sun.play();
+                if (p && p.catch) { p.catch(function () {}); }
+            }
+        } else {
+            sunTimer = setTimeout(function () { sun.pause(); }, 600);
+        }
+    };
+    if ("MutationObserver" in window) {
+        new MutationObserver(syncSun).observe(nav, { attributes: true, attributeFilter: ["class"] });
+    }
+
     // 2. Inverted wipe: handled in CSS (main.css, "Inverted menu wipe"). The
     //    panel is an inverted view of the page while it sweeps, then fades
     //    to black; closing runs backwards.

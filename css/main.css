@@ -685,6 +685,37 @@ svg.defs-only {
 .is-dots-dark .swiper-pagination-vertical > .swiper-pagination-bullet {
   background: #333; }
 
+/* Sun loop at the top of the menu (added by js/nav.js), replacing the
+   planet in the background image. Soft round edge, and it fades in once
+   the menu's black is mostly in, so its own black never shows. */
+.has-nav-sun .nav:before, .has-nav-sun .nav:after {
+  background-image: none; }
+
+.nav__sun {
+  height: 100px;
+  left: 50vw;
+  margin-left: -50px;
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 72%, transparent 100%);
+  mask-image: radial-gradient(circle closest-side, #000 72%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 18px;
+  -webkit-transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease;
+  width: 100px;
+  z-index: 26; }
+  .is-nav-open .nav__sun {
+    opacity: 1;
+    -webkit-transition: opacity 0.45s ease 0.85s;
+    transition: opacity 0.45s ease 0.85s; }
+  @media screen and (min-width: 48em) {
+    .nav__sun {
+      height: 120px;
+      margin-left: -60px;
+      top: 14px;
+      width: 120px; } }
+
 /* Arriving from a menu link: start with the panel covering the page, then
    js/nav.js removes this so it wipes back to the side. */
 .is-arriving .nav {
@@ -704,7 +735,9 @@ svg.defs-only {
     backdrop-filter: invert(1);
     background: transparent;
     -webkit-transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.35s;
-    transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.35s; }
+    transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.35s;
+    /* fully closed: a sliver here would show as an inverted line */
+    width: 0; }
     .nav.is-nav-open {
       -webkit-transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.2s;
       transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.2s; }
@@ -714,23 +747,23 @@ svg.defs-only {
       transition: opacity 0.3s ease; }
     .nav.is-nav-open:before, .nav.is-nav-open:after {
       opacity: 1;
-      -webkit-transition: opacity 0.6s ease 0.75s;
-      transition: opacity 0.6s ease 0.75s; }
+      -webkit-transition: opacity 0.5s ease 0.6s;
+      transition: opacity 0.5s ease 0.6s; }
   .js .nav__inner {
     -webkit-transition: opacity 0.15s ease, width 0s 0.35s;
     transition: opacity 0.15s ease, width 0s 0.35s; }
   .is-nav-open .nav__inner {
-    -webkit-transition: opacity 0.45s ease 1.05s, width 0s;
-    transition: opacity 0.45s ease 1.05s, width 0s; }
+    -webkit-transition: opacity 0.35s ease 0.5s, width 0s;
+    transition: opacity 0.35s ease 0.5s, width 0s; }
   .nav__badge {
     -webkit-transition: opacity 0.15s ease, -webkit-transform 0.25s ease-out;
     transition: opacity 0.15s ease, transform 0.25s ease-out; }
   .is-nav-open .nav__badge {
-    -webkit-transition: opacity 0.45s ease 1.05s, -webkit-transform 0.25s ease-out;
-    transition: opacity 0.45s ease 1.05s, transform 0.25s ease-out; }
+    -webkit-transition: opacity 0.35s ease 0.5s, -webkit-transform 0.25s ease-out;
+    transition: opacity 0.35s ease 0.5s, transform 0.25s ease-out; }
   /* The white wash over the page would dull the inversion; the panel
      covers everything anyway. */
-  .nav-overlay-shield.is-nav-open {
+  html .nav-overlay-shield.is-nav-open {
     opacity: 0; }
   /* Arriving from a menu link: covered in black, then (is-uncovering) the
      black fades to the inverted new page, then it sweeps back. */
