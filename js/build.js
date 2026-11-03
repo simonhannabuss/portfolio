@@ -8028,7 +8028,10 @@ var SH = SH || {};
             },
             onSlideChangeEnd: function() {
                 if (!props.isSmallScreen) {
-                    $DOM.galleries.eq(clients.activeIndex).find('.gallery__item[data-swiper-slide-index="0"]').addClass("is-expanding");
+                    // Look the gallery up from the active slide itself, so a
+                    // slide without a gallery (the home-v2 hero) can sit in
+                    // front without shifting every project by one.
+                    $(clients.slides[clients.activeIndex]).find('.gallery__item[data-swiper-slide-index="0"]').addClass("is-expanding");
                 }
                 $DOM.galleries.each(function() {
                     $(this)[0].swiper.slideTo(1, 0);
