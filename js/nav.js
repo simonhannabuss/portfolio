@@ -3,10 +3,8 @@
  *
  * 1. Menu button + slide dots go dark over light photos. The page checks the
  *    actual part of the photo sitting behind them, so it follows each image.
- * 2. Inverted wipe (CSS): the menu panel sweeps across as an inverted view of
- *    the page, then fades to black; closing runs the other way.
- * 3. Page-to-page wipe: following a menu link, the new page opens under the
- *    black panel, which fades to the inverted page and sweeps back.
+ * 2. Page-to-page wipe: following a menu link, the new page opens under the
+ *    black panel, which then wipes back to the side.
  */
 (function () {
     var root = document.documentElement;
@@ -100,52 +98,7 @@
         window.addEventListener("load", checkTone);
     }
 
-    // Sun loop at the top of the menu; plays only while the menu is open.
-    var sun = document.createElement("video");
-    sun.className = "nav__sun";
-    sun.muted = true;
-    sun.loop = true;
-    sun.playsInline = true;
-    sun.setAttribute("playsinline", "");
-    sun.setAttribute("muted", "");
-    sun.setAttribute("aria-hidden", "true");
-    sun.preload = "none";
-    sun.poster = "images/hero/nav-sun-poster.jpg";
-    sun.src = "images/hero/nav-sun.mp4";
-    nav.appendChild(sun);
-    root.classList.add("has-nav-sun");
-    var sunTimer = null;
-    var syncSun = function () {
-        clearTimeout(sunTimer);
-        if (nav.classList.contains("is-nav-open")) {
-            if (!reduceMotion) {
-                var p = sun.play();
-                if (p && p.catch) { p.catch(function () {}); }
-            }
-        } else {
-            sunTimer = setTimeout(function () { sun.pause(); }, 600);
-        }
-    };
-    if ("MutationObserver" in window) {
-        new MutationObserver(syncSun).observe(nav, { attributes: true, attributeFilter: ["class"] });
-    }
-
-    // Closing: flag it briefly so the CSS shade can deepen then lift.
-    var closingTimer = null;
-    btn.addEventListener("click", function () {
-        if (nav.classList.contains("is-nav-open")) { return; }   // build.js has just opened it
-        clearTimeout(closingTimer);
-        root.classList.remove("nav-closing");
-        void root.offsetWidth;
-        root.classList.add("nav-closing");
-        closingTimer = setTimeout(function () { root.classList.remove("nav-closing"); }, 1300);
-    });
-
-    // 2. Inverted wipe: handled in CSS (main.css, "Inverted menu wipe"). The
-    //    panel is an inverted view of the page while it sweeps, then fades
-    //    to black; closing runs backwards.
-
-    // 3. Page-to-page wipe -------------------------------------------------------
+    // 2. Page-to-page wipe ----------------------------------------------------
     var KEY = "navWipe";
     var store = function (v) {
         try {
@@ -170,17 +123,13 @@
         if (reduceMotion) {
             root.classList.remove("is-arriving");
         } else {
-            // Black fades to an inverted view of the new page, then the
-            // inverted panel sweeps back to the side.
+            // The panel's normal black wipe runs back to the side.
             setTimeout(function () {
-                void nav.offsetWidth;                      // lock in the covered state
-                root.classList.add("is-uncovering");
-                setTimeout(function () {
-                    root.classList.add("nav-revealing");
-                    root.classList.remove("is-arriving", "is-uncovering");
-                    setTimeout(function () { root.classList.remove("nav-revealing"); }, 1200);
-                }, 520);
-            }, 150);
+                requestAnimationFrame(function () {
+                    void nav.offsetWidth;                  // lock in the covered state
+                    root.classList.remove("is-arriving");
+                });
+            }, 120);
         }
     }
 
@@ -188,7 +137,7 @@
     window.addEventListener("pageshow", function (e) {
         if (!e.persisted) { return; }
         store(false);
-        root.classList.remove("is-arriving", "is-uncovering");
+        root.classList.remove("is-arriving");
         if (nav.classList.contains("is-nav-open")) { btn.click(); }
     });
 })();
