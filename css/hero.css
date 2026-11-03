@@ -10,9 +10,9 @@
  */
 .hero {
   --hero-video-h: min(max(100vh, 56.25vw), 96vw);
-  /* Smallest breath still covers the sun and its flares (reach ~83% of
-     the video height); the breath then grows it 8% larger. */
-  --hero-circle: calc(var(--hero-video-h) * 0.88);
+  /* Smallest breath lets the two biggest flares peek out; the breath
+     then grows it to ~92% of the video height, covering everything. */
+  --hero-circle: calc(var(--hero-video-h) * 0.79);
   --hero-drift-x: 0px;
   --hero-drift-y: 0px;
   background: #fefefe;
@@ -64,7 +64,7 @@
     transform: scale(1); }
   50% {
     opacity: 1;
-    transform: scale(1.08); } }
+    transform: scale(1.165); } }
 
 /* Name and discipline ------------------------------------------------------ */
 .hero__text {
@@ -81,10 +81,10 @@
   z-index: 2; }
 
 .hero__name {
-  bottom: calc(50% + var(--hero-circle) / 2 + 44px); }
+  bottom: calc(50% + var(--hero-circle) / 2 + 56px); }
 
 .hero__role {
-  top: calc(50% + var(--hero-circle) / 2 + 44px); }
+  top: calc(50% + var(--hero-circle) / 2 + 56px); }
 
 /* Wide enough screens: either side of the circle, as in Figma. */
 @media screen and (min-width: 48em) and (min-aspect-ratio: 4 / 3) {
@@ -95,10 +95,10 @@
     bottom: auto;
     transform: translateY(-50%); }
   .hero__name {
-    right: calc(50% + var(--hero-circle) / 2 + 80px);
+    right: calc(50% + var(--hero-circle) / 2 + 110px);
     text-align: right; }
   .hero__role {
-    left: calc(50% + var(--hero-circle) / 2 + 80px);
+    left: calc(50% + var(--hero-circle) / 2 + 110px);
     text-align: left; } }
 
 /* Sound toggle ------------------------------------------------------------- */
