@@ -1,0 +1,172 @@
+/**
+ * Sun hero (home-v2.html) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * First slide of the vertical client list. A looping sun video on white,
+ * a breathing yellow multiply circle, and the name either side of it.
+ *
+ * --hero-video-h is the height the video is drawn at. The video has a plain
+ * white background, so it never needs to "cover": it is as tall as the
+ * screen on desktop, and capped by width on portrait phones so the whole
+ * sun stays visible. The circle is sized from it so the two always line up.
+ */
+.hero {
+  --hero-video-h: min(max(100vh, 56.25vw), 105vw);
+  --hero-circle: calc(var(--hero-video-h) * 0.74);
+  --hero-drift-x: 0px;
+  --hero-drift-y: 0px;
+  background: #fefefe;
+  color: #000;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  position: relative;
+  width: 100%; }
+  @media screen and (min-width: 30em) {
+    .hero {
+      height: 100vh;
+      width: 100vw; } }
+
+.hero__sun,
+.hero__circle {
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  top: 50%; }
+
+.hero__sun {
+  aspect-ratio: 16 / 9;
+  display: block;
+  height: var(--hero-video-h);
+  max-width: none;
+  object-fit: cover;
+  transform: translate3d(calc(-50% + var(--hero-drift-x)), calc(-50% + var(--hero-drift-y)), 0);
+  width: auto; }
+
+.hero__circle {
+  height: var(--hero-circle);
+  margin: calc(var(--hero-circle) / -2) 0 0 calc(var(--hero-circle) / -2);
+  mix-blend-mode: multiply;
+  transform: translate3d(var(--hero-drift-x), var(--hero-drift-y), 0);
+  width: var(--hero-circle); }
+  .hero__circle::before {
+    animation: hero-breathe 9s ease-in-out infinite;
+    background: #fbff56;
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%; }
+
+@keyframes hero-breathe {
+  0%, 100% {
+    opacity: 0.92;
+    transform: scale(0.97); }
+  50% {
+    opacity: 1;
+    transform: scale(1.03); } }
+
+/* Name and discipline ------------------------------------------------------ */
+.hero__text {
+  font-family: 'Quicksand', Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  left: 0;
+  line-height: 1.2;
+  margin: 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  text-transform: lowercase;
+  z-index: 2; }
+
+.hero__name {
+  bottom: calc(50% + var(--hero-circle) / 2 + 28px); }
+
+.hero__role {
+  top: calc(50% + var(--hero-circle) / 2 + 28px); }
+
+/* Wide enough screens: either side of the circle, as in Figma. */
+@media screen and (min-width: 48em) and (min-aspect-ratio: 4 / 3) {
+  .hero__text {
+    left: auto;
+    right: auto;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%); }
+  .hero__name {
+    right: calc(50% + var(--hero-circle) / 2 + 56px);
+    text-align: right; }
+  .hero__role {
+    left: calc(50% + var(--hero-circle) / 2 + 56px);
+    text-align: left; } }
+
+/* Sound toggle ------------------------------------------------------------- */
+.hero__sound {
+  align-items: center;
+  background: none;
+  border: 0;
+  bottom: 28px;
+  color: #333;
+  cursor: pointer;
+  display: none;
+  font-family: 'Quicksand', Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  gap: 10px;
+  letter-spacing: 0.1em;
+  padding: 10px;
+  position: absolute;
+  right: 26px;
+  text-transform: lowercase;
+  z-index: 3; }
+  .hero__sound.is-available {
+    display: flex; }
+  .hero__sound-bars {
+    align-items: flex-end;
+    display: flex;
+    gap: 3px;
+    height: 12px; }
+    .hero__sound-bars i {
+      background: currentColor;
+      display: block;
+      height: 3px;
+      transition: height 0.3s;
+      width: 2px; }
+  .hero__sound.is-on .hero__sound-bars i {
+    animation: hero-bars 1.2s ease-in-out infinite; }
+    .hero__sound.is-on .hero__sound-bars i:nth-child(2) {
+      animation-delay: -0.4s; }
+    .hero__sound.is-on .hero__sound-bars i:nth-child(3) {
+      animation-delay: -0.8s; }
+  @media screen and (min-width: 76.875em) {
+    .hero__sound {
+      right: 7%; } }
+
+@keyframes hero-bars {
+  0%, 100% {
+    height: 3px; }
+  50% {
+    height: 12px; } }
+
+/* While the hero is on screen: dark nav button and slide dots. */
+.is-hero-active .nav-btn:not(.is-nav-open) {
+  color: #333; }
+
+.is-hero-active .swiper-pagination-vertical > .swiper-pagination-bullet {
+  background: #333; }
+
+/* Reduced motion: still sun, still circle. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__circle::before,
+  .hero__sound.is-on .hero__sound-bars i {
+    animation: none; }
+  .hero__sun,
+  .hero__circle {
+    --hero-drift-x: 0px;
+    --hero-drift-y: 0px; } }
+
+/* The closed menu panel is a 0.01vw sliver at the left edge; invisible on
+   the dark project slides but a dark hairline on the white hero. */
+.is-hero-active .nav {
+  width: 0; }
+  .is-hero-active .nav.is-nav-open {
+    width: 100vw; }
