@@ -130,6 +130,17 @@
         new MutationObserver(syncSun).observe(nav, { attributes: true, attributeFilter: ["class"] });
     }
 
+    // Closing: flag it briefly so the CSS shade can deepen then lift.
+    var closingTimer = null;
+    btn.addEventListener("click", function () {
+        if (nav.classList.contains("is-nav-open")) { return; }   // build.js has just opened it
+        clearTimeout(closingTimer);
+        root.classList.remove("nav-closing");
+        void root.offsetWidth;
+        root.classList.add("nav-closing");
+        closingTimer = setTimeout(function () { root.classList.remove("nav-closing"); }, 1300);
+    });
+
     // 2. Inverted wipe: handled in CSS (main.css, "Inverted menu wipe"). The
     //    panel is an inverted view of the page while it sweeps, then fades
     //    to black; closing runs backwards.
@@ -165,7 +176,9 @@
                 void nav.offsetWidth;                      // lock in the covered state
                 root.classList.add("is-uncovering");
                 setTimeout(function () {
+                    root.classList.add("nav-revealing");
                     root.classList.remove("is-arriving", "is-uncovering");
+                    setTimeout(function () { root.classList.remove("nav-revealing"); }, 1200);
                 }, 520);
             }, 150);
         }
