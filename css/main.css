@@ -724,23 +724,31 @@ svg.defs-only {
   width: 100vw !important; }
 
 /* Inverted menu wipe ----------------------------------------------------------
-   The panel sweeps across as an inverted view of the page underneath
-   (backdrop-filter), then its black + space image fade in over it and the
-   links appear. Closing runs backwards: links and black fade out, then the
-   inverted panel sweeps back. Browsers without backdrop-filter keep the
-   original solid black wipe. */
+   Opening: the panel sweeps across as a dim, dark inverted view of the
+   page, while the page still ahead of it darkens more and more; then the
+   panel fades to black and the links appear.
+   Closing: links and black fade out, the panel retracts as a dark inverted
+   view whose inversion weakens as it goes, and the revealed page brightens
+   back to normal.
+   When the menu is fully shut the panel has no filter at all (some browsers
+   stop drawing videos near an element with a live backdrop-filter).
+   Browsers without backdrop-filter keep the original solid black wipe. */
 @supports ((-webkit-backdrop-filter: invert(1)) or (backdrop-filter: invert(1))) {
   .nav {
-    -webkit-backdrop-filter: invert(1);
-    backdrop-filter: invert(1);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     background: transparent;
-    -webkit-transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.35s;
-    transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.35s;
+    -webkit-transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.35s, -webkit-backdrop-filter 0.85s ease-in 0.35s;
+    transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.35s, backdrop-filter 0.85s ease-in 0.35s, -webkit-backdrop-filter 0.85s ease-in 0.35s;
     /* fully closed: a sliver here would show as an inverted line */
     width: 0; }
+    .nav.is-nav-open,
+    .is-arriving .nav {
+      -webkit-backdrop-filter: invert(1) brightness(0.4);
+      backdrop-filter: invert(1) brightness(0.4); }
     .nav.is-nav-open {
-      -webkit-transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.2s;
-      transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.2s; }
+      -webkit-transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.2s, -webkit-backdrop-filter 0s;
+      transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.2s, backdrop-filter 0s, -webkit-backdrop-filter 0s; }
     .nav:before, .nav:after {
       opacity: 0;
       -webkit-transition: opacity 0.3s ease;
@@ -761,21 +769,65 @@ svg.defs-only {
   .is-nav-open .nav__badge {
     -webkit-transition: opacity 0.35s ease 0.5s, -webkit-transform 0.25s ease-out;
     transition: opacity 0.35s ease 0.5s, transform 0.25s ease-out; }
-  /* The white wash over the page would dull the inversion; the panel
-     covers everything anyway. */
-  html .nav-overlay-shield.is-nav-open {
-    opacity: 0; }
-  /* Arriving from a menu link: covered in black, then (is-uncovering) the
-     black fades to the inverted new page, then it sweeps back. */
-  .is-arriving .nav:before, .is-arriving .nav:after {
-    opacity: 1;
+  /* Shade: a black layer above the page AND the panel that deepens as the
+     panel sweeps across, so the inverted view and the page ahead both get
+     darker; it lifts again as the menu's own black arrives. Closing deepens
+     it briefly, then lifts it as the page is revealed. */
+  html .nav-overlay-shield {
+    background: #000;
+    opacity: 0;
     -webkit-transition: none;
     transition: none; }
+  html .nav-overlay-shield.is-nav-open {
+    -webkit-animation: nav-shade-open 1.15s ease forwards;
+    animation: nav-shade-open 1.15s ease forwards;
+    z-index: 21; }
+  html.nav-closing .nav-overlay-shield {
+    -webkit-animation: nav-shade-close 1.25s ease forwards;
+    animation: nav-shade-close 1.25s ease forwards;
+    z-index: 21; }
+  html.is-arriving .nav-overlay-shield {
+    opacity: 0.5;
+    z-index: 21; }
+  html.nav-revealing .nav-overlay-shield {
+    -webkit-animation: nav-shade-reveal 1.1s ease forwards;
+    animation: nav-shade-reveal 1.1s ease forwards;
+    z-index: 21; }
+  /* Arriving from a menu link: covered in black, then (is-uncovering) the
+     black fades to the dark inverted new page, then it sweeps back. */
+  .is-arriving .nav:before, .is-arriving .nav:after {
+    -webkit-transition: none;
+    transition: none; }
+  .is-arriving .nav:before, .is-arriving .nav:after {
+    opacity: 1; }
   .is-arriving.is-uncovering .nav:before, .is-arriving.is-uncovering .nav:after {
     opacity: 0;
     -webkit-transition: opacity 0.45s ease;
     transition: opacity 0.45s ease; } }
 
+
+@-webkit-keyframes nav-shade-open {
+  0%, 18% { opacity: 0; }
+  60% { opacity: 0.5; }
+  100% { opacity: 0; } }
+@keyframes nav-shade-open {
+  0%, 18% { opacity: 0; }
+  60% { opacity: 0.5; }
+  100% { opacity: 0; } }
+@-webkit-keyframes nav-shade-close {
+  0% { opacity: 0; }
+  25% { opacity: 0.5; }
+  100% { opacity: 0; } }
+@keyframes nav-shade-close {
+  0% { opacity: 0; }
+  25% { opacity: 0.5; }
+  100% { opacity: 0; } }
+@-webkit-keyframes nav-shade-reveal {
+  0% { opacity: 0.5; }
+  100% { opacity: 0; } }
+@keyframes nav-shade-reveal {
+  0% { opacity: 0.5; }
+  100% { opacity: 0; } }
 
 .nav-overlay-shield {
   background: white;
