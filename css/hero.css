@@ -39,7 +39,7 @@
   height: var(--hero-video-h);
   max-width: none;
   object-fit: cover;
-  transform: translate3d(-50%, -50%, 0) scale(var(--hero-zoom));
+  transform: translate3d(-50%, -50%, 0) scale(var(--hero-zoom)) rotate(var(--hero-spin, 0deg));
   width: auto; }
 
 .hero__circle {

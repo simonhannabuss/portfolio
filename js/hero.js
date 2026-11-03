@@ -2,7 +2,8 @@
  * Sun hero (home-v2.html)
  * - picks the small or large sun video and only plays it while the hero is in view
  * - breathes the yellow circle; while the mouse moves the breath pauses and the sun
- *   and circle slowly grow/shrink with the cursor, then the breath resumes seamlessly
+ *   and circle slowly grow/shrink with the cursor and the sun slowly turns (right =
+ *   clockwise, left = anticlockwise), then the breath resumes seamlessly
  * - optional ambient sound, off by default, toggled by the button in the corner
  * Respects prefers-reduced-motion: the poster frame shows and nothing moves.
  */
@@ -82,6 +83,8 @@
         var BREATH_SECONDS = 9;      // one full in-and-out
         var BREATH_GROW = 0.115;     // largest breath is 11.5% bigger
         var ZOOM_RANGE = 0.03;       // mouse zoom, +/- 3%
+        var SPIN_MAX = 8;            // fastest the sun turns, degrees per second
+        var SPIN_PER_PX = 0.012;     // turn speed per px/s of sideways mouse speed
         var IDLE_MS = 450;           // how long still counts as "stopped"
         var EASE = 0.04;             // softness of every change (per 60fps frame)
 
@@ -92,6 +95,11 @@
         var zoomTarget = 1;
         var lastMove = 0;
         var lastTime = 0;
+        var spin = 0;                // current turn speed, degrees per second
+        var spinTarget = 0;
+        var angle = 0;
+        var lastX = null;
+        var lastXTime = 0;
 
         hero.classList.add("is-js-breath");
 
@@ -103,10 +111,19 @@
                 // 0 at the centre, 1 at the edges/corners
                 var d = Math.min(1, Math.sqrt(dx * dx + dy * dy) / 0.5);
                 zoomTarget = 1 + ZOOM_RANGE - d * 2 * ZOOM_RANGE;
-                lastMove = performance.now();
+                var t = performance.now();
+                // Sideways speed sets the turn: right = clockwise, left = anticlockwise.
+                if (lastX !== null && t > lastXTime) {
+                    var vx = (e.clientX - lastX) / ((t - lastXTime) / 1000);
+                    spinTarget = Math.max(-SPIN_MAX, Math.min(SPIN_MAX, vx * SPIN_PER_PX));
+                }
+                lastX = e.clientX;
+                lastXTime = t;
+                lastMove = t;
             });
             hero.addEventListener("mouseleave", function () {
                 lastMove = 0;
+                lastX = null;
             });
         }
 
@@ -121,12 +138,17 @@
 
             breathRate += ((moving ? 0 : 1) - breathRate) * k;
             zoom += ((moving ? zoomTarget : 1) - zoom) * k;
+            // The turn eases in and out more gently still, and the sun keeps
+            // whatever angle it reaches.
+            spin += ((moving ? spinTarget : 0) - spin) * k * 0.6;
+            angle = (angle + spin * dt) % 360;
             phase = (phase + dt * breathRate * 2 * Math.PI / BREATH_SECONDS) % (2 * Math.PI);
 
             var b = (1 - Math.cos(phase)) / 2;   // 0 = smallest, 1 = largest
             hero.style.setProperty("--hero-breath", (1 + b * BREATH_GROW).toFixed(4));
             hero.style.setProperty("--hero-breath-opacity", (0.94 + b * 0.06).toFixed(3));
             hero.style.setProperty("--hero-zoom", zoom.toFixed(4));
+            hero.style.setProperty("--hero-spin", angle.toFixed(3) + "deg");
         };
         requestAnimationFrame(frame);
     }
