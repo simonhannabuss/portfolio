@@ -685,25 +685,64 @@ svg.defs-only {
 .is-dots-dark .swiper-pagination-vertical > .swiper-pagination-bullet {
   background: #333; }
 
-/* Inverted band riding the edge of the black menu wipe (js/nav.js) */
-.nav-invert {
-  -webkit-backdrop-filter: invert(1);
-  backdrop-filter: invert(1);
-  height: 100vh;
-  left: 0;
-  pointer-events: none;
-  position: fixed;
-  top: 0;
-  width: 0;
-  will-change: transform, width;
-  z-index: 19; }
-
 /* Arriving from a menu link: start with the panel covering the page, then
    js/nav.js removes this so it wipes back to the side. */
 .is-arriving .nav {
   -webkit-transition: none !important;
   transition: none !important;
   width: 100vw !important; }
+
+/* Inverted menu wipe ----------------------------------------------------------
+   The panel sweeps across as an inverted view of the page underneath
+   (backdrop-filter), then its black + space image fade in over it and the
+   links appear. Closing runs backwards: links and black fade out, then the
+   inverted panel sweeps back. Browsers without backdrop-filter keep the
+   original solid black wipe. */
+@supports ((-webkit-backdrop-filter: invert(1)) or (backdrop-filter: invert(1))) {
+  .nav {
+    -webkit-backdrop-filter: invert(1);
+    backdrop-filter: invert(1);
+    background: transparent;
+    -webkit-transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.35s;
+    transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.35s; }
+    .nav.is-nav-open {
+      -webkit-transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.2s;
+      transition: width 0.6s cubic-bezier(0.29, 0.89, 0, 0.99) 0.2s; }
+    .nav:before, .nav:after {
+      opacity: 0;
+      -webkit-transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease; }
+    .nav.is-nav-open:before, .nav.is-nav-open:after {
+      opacity: 1;
+      -webkit-transition: opacity 0.6s ease 0.75s;
+      transition: opacity 0.6s ease 0.75s; }
+  .js .nav__inner {
+    -webkit-transition: opacity 0.15s ease, width 0s 0.35s;
+    transition: opacity 0.15s ease, width 0s 0.35s; }
+  .is-nav-open .nav__inner {
+    -webkit-transition: opacity 0.45s ease 1.05s, width 0s;
+    transition: opacity 0.45s ease 1.05s, width 0s; }
+  .nav__badge {
+    -webkit-transition: opacity 0.15s ease, -webkit-transform 0.25s ease-out;
+    transition: opacity 0.15s ease, transform 0.25s ease-out; }
+  .is-nav-open .nav__badge {
+    -webkit-transition: opacity 0.45s ease 1.05s, -webkit-transform 0.25s ease-out;
+    transition: opacity 0.45s ease 1.05s, transform 0.25s ease-out; }
+  /* The white wash over the page would dull the inversion; the panel
+     covers everything anyway. */
+  .nav-overlay-shield.is-nav-open {
+    opacity: 0; }
+  /* Arriving from a menu link: covered in black, then (is-uncovering) the
+     black fades to the inverted new page, then it sweeps back. */
+  .is-arriving .nav:before, .is-arriving .nav:after {
+    opacity: 1;
+    -webkit-transition: none;
+    transition: none; }
+  .is-arriving.is-uncovering .nav:before, .is-arriving.is-uncovering .nav:after {
+    opacity: 0;
+    -webkit-transition: opacity 0.45s ease;
+    transition: opacity 0.45s ease; } }
+
 
 .nav-overlay-shield {
   background: white;
