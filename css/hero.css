@@ -13,8 +13,7 @@
   /* Smallest breath lets the two biggest flares peek out; the breath
      then grows it to ~88% of the video height. */
   --hero-circle: calc(var(--hero-video-h) * 0.79);
-  --hero-drift-x: 0px;
-  --hero-drift-y: 0px;
+  --hero-zoom: 1;
   background: #fefefe;
   color: #000;
   height: 100vh;
@@ -40,14 +39,14 @@
   height: var(--hero-video-h);
   max-width: none;
   object-fit: cover;
-  transform: translate3d(calc(-50% + var(--hero-drift-x)), calc(-50% + var(--hero-drift-y)), 0);
+  transform: translate3d(-50%, -50%, 0) scale(var(--hero-zoom));
   width: auto; }
 
 .hero__circle {
   height: var(--hero-circle);
   margin: calc(var(--hero-circle) / -2) 0 0 calc(var(--hero-circle) / -2);
   mix-blend-mode: multiply;
-  transform: translate3d(var(--hero-drift-x), var(--hero-drift-y), 0);
+  transform: scale(var(--hero-zoom));
   width: var(--hero-circle); }
   .hero__circle::before {
     animation: hero-breathe 9s ease-in-out infinite;
@@ -163,8 +162,7 @@
     animation: none; }
   .hero__sun,
   .hero__circle {
-    --hero-drift-x: 0px;
-    --hero-drift-y: 0px; } }
+    --hero-zoom: 1; } }
 
 /* The closed menu panel is a 0.01vw sliver at the left edge; invisible on
    the dark project slides but a dark hairline on the white hero. */

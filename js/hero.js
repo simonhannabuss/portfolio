@@ -1,7 +1,7 @@
 /**
  * Sun hero (home-v2.html)
  * - picks the small or large sun video and only plays it while the hero is in view
- * - eases the sun (and the yellow circle with it) gently away from the mouse
+ * - gently grows the sun and circle as the mouse nears them, shrinks them as it moves away
  * - optional ambient sound, off by default, toggled by the button in the corner
  * Respects prefers-reduced-motion: the poster frame shows and nothing moves.
  */
@@ -70,24 +70,27 @@
     window.addEventListener("load", syncActive);
     syncActive();
 
-    // Mouse drift ------------------------------------------------------------
+    // Mouse zoom ------------------------------------------------------------
+    // The sun and circle grow a little as the cursor nears the centre and
+    // shrink a little as it moves out towards the edges.
     var canHover = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
     if (!reduceMotion && canHover) {
-        var MAX = 14;            // furthest the sun travels, in px
-        var target = { x: 0, y: 0 };
-        var current = { x: 0, y: 0 };
+        var RANGE = 0.03;        // +/- 3% either side of normal size
+        var target = 1;
+        var current = 1;
         var running = false;
 
         hero.addEventListener("mousemove", function (e) {
             var r = hero.getBoundingClientRect();
-            // -1 .. 1 from the centre; the sun moves away from the cursor
-            target.x = -((e.clientX - r.left) / r.width - 0.5) * 2 * MAX;
-            target.y = -((e.clientY - r.top) / r.height - 0.5) * 2 * MAX;
+            var dx = (e.clientX - r.left) / r.width - 0.5;
+            var dy = (e.clientY - r.top) / r.height - 0.5;
+            // 0 at the centre, 1 at the edges/corners
+            var d = Math.min(1, Math.sqrt(dx * dx + dy * dy) / 0.5);
+            target = 1 + RANGE - d * 2 * RANGE;
             start();
         });
         hero.addEventListener("mouseleave", function () {
-            target.x = 0;
-            target.y = 0;
+            target = 1;
             start();
         });
 
@@ -98,11 +101,9 @@
             }
         }
         function tick() {
-            current.x += (target.x - current.x) * 0.04;
-            current.y += (target.y - current.y) * 0.04;
-            hero.style.setProperty("--hero-drift-x", current.x.toFixed(2) + "px");
-            hero.style.setProperty("--hero-drift-y", current.y.toFixed(2) + "px");
-            if (Math.abs(target.x - current.x) > 0.05 || Math.abs(target.y - current.y) > 0.05) {
+            current += (target - current) * 0.04;
+            hero.style.setProperty("--hero-zoom", current.toFixed(4));
+            if (Math.abs(target - current) > 0.0005) {
                 requestAnimationFrame(tick);
             } else {
                 running = false;
