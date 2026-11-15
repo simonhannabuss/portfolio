@@ -568,7 +568,7 @@ svg.defs-only {
   pointer-events: none;
   position: absolute;
   top: 50vh;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--nav-zoom, 1)) rotate(var(--nav-spin, 0deg));
   width: auto;
   z-index: 26; }
 
