@@ -98,6 +98,42 @@
         window.addEventListener("load", checkTone);
     }
 
+    // Dark sun behind the menu --------------------------------------------------
+    // A looping inverted sun, centred like the home page sun. It loads only
+    // when the menu is first opened, plays while it is open and pauses after.
+    var sun = document.createElement("video");
+    sun.className = "nav__sun";
+    sun.muted = true;
+    sun.loop = true;
+    sun.playsInline = true;
+    sun.setAttribute("muted", "");
+    sun.setAttribute("playsinline", "");
+    sun.setAttribute("aria-hidden", "true");
+    sun.preload = "none";
+    sun.poster = "images/hero/sun-hero-invert-poster.jpg";
+    nav.insertBefore(sun, nav.firstChild);
+    var sunTimer = null;
+    var syncSun = function () {
+        clearTimeout(sunTimer);
+        if (nav.classList.contains("is-nav-open") || root.classList.contains("is-arriving")) {
+            if (!sun.src) {
+                var small = window.innerWidth * (window.devicePixelRatio || 1) < 1200;
+                sun.src = small ? "images/hero/sun-hero-invert-960.mp4" : "images/hero/sun-hero-invert.mp4";
+            }
+            if (!reduceMotion) {
+                var p = sun.play();
+                if (p && p.catch) { p.catch(function () {}); }
+            }
+        } else {
+            sunTimer = setTimeout(function () { sun.pause(); }, 900);   // after the panel has closed
+        }
+    };
+    if ("MutationObserver" in window) {
+        new MutationObserver(syncSun).observe(nav, { attributes: true, attributeFilter: ["class"] });
+        new MutationObserver(syncSun).observe(root, { attributes: true, attributeFilter: ["class"] });
+    }
+    syncSun();
+
     // 2. Page-to-page wipe ----------------------------------------------------
     var KEY = "navWipe";
     var store = function (v) {

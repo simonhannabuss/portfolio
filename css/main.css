@@ -547,8 +547,7 @@ svg.defs-only {
   .nav.is-nav-open, .no-js .nav:target {
     width: 100vw; }
   .nav:before, .nav:after {
-    background: black url(../images/bg_nav.jpg) no-repeat right 30px top -7px;
-    background-attachment: fixed;
+    background: black;
     content: "";
     display: block;
     height: 100%;
@@ -557,9 +556,21 @@ svg.defs-only {
     top: 0;
     width: 100%;
     z-index: 25; }
-    @media screen and (min-width: 30em) {
-      .nav:before, .nav:after {
-        background-position: center top; } }
+
+/* Dark sun behind the open menu (added by js/nav.js). Sized and centred
+   like the home page sun; the panel's width reveals it as it wipes. */
+.nav__sun {
+  --nav-sun-h: min(max(100vh, 56.25vw), 96vw);
+  aspect-ratio: 16 / 9;
+  height: var(--nav-sun-h);
+  left: 50vw;
+  max-width: none;
+  pointer-events: none;
+  position: absolute;
+  top: 50vh;
+  transform: translate(-50%, -50%);
+  width: auto;
+  z-index: 26; }
 
 .nav__inner {
   height: 100%;
