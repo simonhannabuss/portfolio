@@ -134,6 +134,50 @@
     }
     syncSun();
 
+    // Mouse movement, the same as the home page sun: it grows as the cursor
+    // nears the middle and shrinks towards the edges, and slowly turns with
+    // sideways movement (right = clockwise). When the mouse stops it eases
+    // back to its normal size and drifts back to level.
+    if (!reduceMotion && window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        var ZOOM_RANGE = 0.03, SPIN_MAX = 8, SPIN_PER_PX = 0.012, IDLE_MS = 450, LEVEL_EASE = 0.12, EASE = 0.04;
+        var zoom = 1, zoomTarget = 1, spin = 0, spinTarget = 0, angle = 0;
+        var lastMove = 0, lastTime = 0, lastX = null, lastXTime = 0, running = false;
+        var tick = function (now) {
+            var dt = lastTime ? Math.min(0.1, (now - lastTime) / 1000) : 0;
+            lastTime = now;
+            var moving = lastMove && now - lastMove < IDLE_MS;
+            var k = 1 - Math.pow(1 - EASE, dt * 60);
+            zoom += ((moving ? zoomTarget : 1) - zoom) * k;
+            spin += ((moving ? spinTarget : 0) - spin) * k * 0.6;
+            angle += spin * dt;
+            angle = ((angle + 180) % 360 + 360) % 360 - 180;
+            if (!moving) { angle += (0 - angle) * k * LEVEL_EASE; }
+            sun.style.setProperty("--nav-zoom", zoom.toFixed(4));
+            sun.style.setProperty("--nav-spin", angle.toFixed(3) + "deg");
+            // Stop the loop once the menu is closed and everything has settled.
+            var settled = !moving && Math.abs(zoom - 1) < 0.0005 && Math.abs(angle) < 0.05 && Math.abs(spin) < 0.05;
+            if (settled && !nav.classList.contains("is-nav-open")) { running = false; lastTime = 0; return; }
+            requestAnimationFrame(tick);
+        };
+        nav.addEventListener("mousemove", function (e) {
+            if (!nav.classList.contains("is-nav-open")) { return; }
+            var dx = e.clientX / window.innerWidth - 0.5;
+            var dy = e.clientY / window.innerHeight - 0.5;
+            var d = Math.min(1, Math.sqrt(dx * dx + dy * dy) / 0.5);    // 0 middle, 1 edges
+            zoomTarget = 1 + ZOOM_RANGE - d * 2 * ZOOM_RANGE;
+            var t = performance.now();
+            if (lastX !== null && t > lastXTime) {
+                var vx = (e.clientX - lastX) / ((t - lastXTime) / 1000);
+                spinTarget = Math.max(-SPIN_MAX, Math.min(SPIN_MAX, vx * SPIN_PER_PX));
+            }
+            lastX = e.clientX;
+            lastXTime = t;
+            lastMove = t;
+            if (!running) { running = true; requestAnimationFrame(tick); }
+        });
+        nav.addEventListener("mouseleave", function () { lastMove = 0; lastX = null; });
+    }
+
     // 2. Page-to-page wipe ----------------------------------------------------
     var KEY = "navWipe";
     var store = function (v) {
